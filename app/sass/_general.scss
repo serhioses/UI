@@ -1,0 +1,109 @@
+// General
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+    font-size: 16px;
+}
+
+body {
+    color: get-color("black");
+    font-family: unquote(get-font("main"));
+    font-size: 100%;
+    &.body--hidden {
+        overflow: hidden;
+    }
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    @extend %transition;
+}
+
+*:focus {
+    outline: 0;
+}
+
+::placeholder, :placeholder-shown, select {
+    font-family: unquote(get-font("main"));
+}
+
+textarea {
+    resize: none;
+}
+
+label {
+    display: block;
+    cursor: pointer;
+}
+
+form {
+    display: inline;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+}
+
+select {
+    max-width: 100%;
+}
+
+.overlay {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    z-index: 1;
+    @extend %transition;
+    &.bundle-overlay--visible {
+        opacity: 1;
+        left: 0;
+    }
+}
+
+.title {
+    display: block;
+    margin-bottom: 24px;
+    color: get-color("darkGray");
+    line-height: 32px;
+    font-size: get-font-size("ultraLarge");
+    font-weight: bold;
+}
+
+.subtitle {
+    display: block;
+    margin-bottom: 18px;
+    color: get-color("mediumGray");
+    line-height: 24px;
+    font-size: get-font-size("big");
+}
+
+.spinner {
+    
+    &__field {
+        
+    }
+    &__control {
+        
+        &--plus {
+            
+        }
+        &--minus {
+            
+        }
+    }
+}
+
+.message {
+    
+}
+// General (END)

@@ -1,0 +1,47 @@
+.settings {
+    margin-bottom: 32px;
+    &__title {
+        margin-bottom: 12px;
+        line-height: 24px;
+        font-size: get-font-size("base");
+    }
+}
+
+.checkbox {
+    margin-bottom: 12px;
+    padding-left: 32px;
+    line-height: 24px;
+    font-size: get-font-size("small");
+    position: relative;
+    &:before, &:after {
+        content: "";
+        position: absolute;
+    }
+    &:before {
+        margin-top: -8px;
+        border: 2px solid get-color("darkGray");
+        border-radius: 2px;
+        width: 16px;
+        height: 16px;
+        background-color: get-color("white");
+        top: 50%;
+        left: 0;
+    }
+}
+input:checked {
+    & + .checkbox:before {
+        border-color: get-color("blue");
+        background-color: get-color("blue");
+    }
+    & + .checkbox:after {
+        margin-top: -6px;
+        border-width: 0 2px 2px 0;
+        border-style: solid;
+        border-color: get-color("white");
+        width: 5px;
+        height: 10px;
+        top: 50%;
+        left: 6px;
+        transform: rotateZ(45deg);
+    }
+}

@@ -1,0 +1,23 @@
+%transition {
+    transition: all 0.3s ease-in-out;
+}
+
+%clearfix {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+}
+
+.clearfix:after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+}
+
+%clearfixLists {
+    content: "";
+    display: inline-block;
+    width: 100%;
+}

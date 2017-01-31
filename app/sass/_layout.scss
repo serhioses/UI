@@ -1,0 +1,33 @@
+// Layout
+.wrapper {
+    display: flex;
+    flex-direction: column;
+	margin: 0 auto;
+    min-height: 100vh;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.main {
+    flex-grow: 1;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.footer {
+    margin: 0 auto;
+    width: 100%;
+}
+
+.content {
+    padding: 32px 0;
+    &:after {
+        @extend %clearfix;
+    }
+}
+// Layout (END)

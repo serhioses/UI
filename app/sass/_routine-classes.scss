@@ -1,0 +1,158 @@
+// Routine classes
+.flex {
+    display: flex;
+    &--row {
+        flex-direction: row;
+    }
+    &--wrap {
+        flex-wrap: wrap;
+    }
+}
+
+.link {
+    color: get-color("blue");
+    &--underline {
+        text-decoration: underline;
+    }
+    &:hover {
+        color: darken(get-color("blue"), 10%);
+    }
+}
+
+.table {
+    display: table;
+    width: 100%;
+}
+
+.cell {
+    display: table-cell;
+    &--middle {
+        vertical-align: middle;
+    }
+    &--top {
+        vertical-align: top;
+    }
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.relative {
+    position: relative;
+}
+
+.image {
+    display: block;
+}
+
+.image__inner {
+    display: block;
+    font-size: 0;
+    text-align: center;
+    img {
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+.inline-block {
+    display: inline-block;
+    &--top {
+        vertical-align: top;
+    }
+    &--middle {
+        vertical-align: middle;
+    }
+    &--bottom {
+        vertical-align: bottom;
+    }
+}
+
+.none {
+    display: none;
+}
+
+// Description
+.description {
+    margin-bottom: 32px;
+    line-height: 1.43;
+    font-size: get-font-size("small");
+    p {
+        margin: 12px 0;
+        line-height: 1.43;
+        font-size: get-font-size("base");
+    }
+    strong, b {
+        font-weight: bold;
+    }
+    em, i {
+        font-style: italic;
+    }
+    ul {
+        padding-left: 30px;
+        li {
+            margin-bottom: 5px;
+            color: get-color("darkGray");
+            position: relative;
+            &:before {
+                content: "";
+                margin-top: -2.5px;
+                border-radius: 100%;
+                width: 5px;
+                height: 5px;
+                background-color: get-color("mediumGray");
+                position: absolute;
+                top: 50%;
+                left: -17px;
+            }
+        }
+    }
+    ol {
+        padding-left: 30px;
+        counter-reset: list;
+        li {
+            margin-bottom: 5px;
+            color: get-color("darkGray");
+            position: relative;
+            &:before {
+                content: counter(list)".";
+                counter-increment: list;
+                position: absolute;
+                top: 0;
+                left: -21px;
+            }
+        }
+    }
+    a {
+        color: get-color("blue");
+        text-decoration: underline;
+    }
+}
+// Description (END)
+
+// Routine classes (END)

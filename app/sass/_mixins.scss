@@ -1,0 +1,156 @@
+//Fonts
+@mixin font-face($font-name, $file-name){
+    @font-face {
+        font-family: $font-name;
+        src: url("../fonts/" + $file-name + "-webfont.eot");
+        src: url("../fonts/" + $file-name + "-webfont.eot?#iefix") format("embedded-opentype"),
+        url("../fonts/" + $file-name + "-webfont.woff") format("woff"),
+        url("../fonts/" + $file-name + "-webfont.ttf") format("truetype"),
+        url("../fonts/" + $file-name + "-webfont.svg#" + $file-name) format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+}
+
+//Retina images
+@mixin background-image-retina($file, $type, $width, $height, $repeat: false) {
+    @if not $repeat {
+        $repeat: no-repeat;
+    }
+    background-image: url("../images/" + $file + "." + $type);
+    background-repeat: $repeat;
+    background-size: $width $height;
+    @media (-webkit-min-device-pixel-ratio: 2), (-moz-min-device-pixel-ratio: 2) {
+        & {background-image: url("../images/" + $file + "@2x." + $type);}
+    }
+}
+
+//Retina sprites
+@mixin background-sprite-retina($name, $spriteName) {
+    $icons-normal: sprite-map("sprites/" + $spriteName + "/*.png");
+    $icons-retina: sprite-map("sprites/" + $spriteName + "2x/*.png");
+    background-repeat: no-repeat;
+    background-image: sprite-url($icons-normal);
+    background-position: sprite-position($icons-normal,$name);
+    height:image-height(sprite-file($icons-normal, $name));
+    width: image-width(sprite-file($icons-normal, $name));
+
+    @media
+    only screen and (-webkit-min-device-pixel-ratio: 2),
+    only screen and (min--moz-device-pixel-ratio: 2),
+    only screen and (-o-min-device-pixel-ratio: 2/1),
+    only screen and (min-device-pixel-ratio: 2),
+    only screen and (min-resolution: 192dpi),
+    only screen and (min-resolution: 2dppx) {
+        background-image: sprite-url($icons-retina);
+        background-position: 0 round(nth(sprite-position($icons-retina, $name), 2) / 2);
+        height:round(image-height(sprite-file($icons-retina, $name)) / 2);
+        width: round(image-width(sprite-file($icons-retina, $name)) /2 );
+        background-repeat: no-repeat;
+        $double-width:ceil(image-width(sprite-path($icons-retina)) / 2);
+        $auto-height:auto;
+        background-size:$double-width $auto-height;
+    }
+}
+
+// REM fallback
+@mixin font-size($ratio) {
+    font-size: $ratio + rem;
+    font-size: $ratio * 16 + px;
+}
+
+// Grid
+@mixin createGrid($width, $prefix, $cols) {
+    @media (min-width: $width) {
+        .col-#{$prefix} {
+            @for $i from 1 through $cols {
+                &-#{$i} {
+                    display: inline-block;
+                    vertical-align: top;
+                    width: to-fixed(percentage(1 / $cols * $i), 4);
+                    // float: left;
+                }
+            }
+        }
+
+        .col-offset-#{$prefix} {
+            @for $i from 1 through $cols {
+                &-#{$i} {
+                    margin-left: to-fixed(percentage(1 / $cols * $i), 4);
+                }
+            }
+        }
+    }
+}
+
+@mixin make-container() {
+    margin: 0 auto;
+    min-width: 320px;
+    padding-right: $gutter / 2;
+    padding-left: $gutter / 2;
+    @media (min-width: nth($screens, 2)) {
+        width: 750px;
+    }
+    @media (min-width: nth($screens, 3)) {
+        width: 970px;
+    }
+    @media (min-width: nth($screens, 4)) {
+        width: 1170px;
+    }
+}
+
+@mixin make-row() {
+    margin-right: $gutter / -2;
+    margin-left: $gutter / -2;
+    &:after {
+        @extend %clearfix;
+    }
+}
+
+@mixin make-default-column() {
+    width: 100%;
+    padding-right: $cutter / 2;
+    padding-left: $cutter / 2;
+    float: none;
+    position: relative;
+}
+
+@mixin make-mb-column($cols, $len) {
+    padding-right: $gutter / 2;
+    padding-left: $gutter / 2;
+    position: relative;
+    @media (min-width: nth($screens, 1)) {
+        width: to-fixed(percentage(1 / $cols * $len));
+        float: left;
+    }
+}
+
+@mixin make-sm-column($cols, $len) {
+    padding-right: $gutter / 2;
+    padding-left: $gutter / 2;
+    position: relative;
+    @media (min-width: nth($screens, 2)) {
+        width: to-fixed(percentage(1 / $cols * $len));
+        float: left;
+    }
+}
+
+@mixin make-md-column($cols, $len) {
+    padding-right: $gutter / 2;
+    padding-left: $gutter / 2;
+    position: relative;
+    @media (min-width: nth($screens, 3)) {
+        width: to-fixed(percentage(1 / $cols * $len));
+        float: left;
+    }
+}
+
+@mixin make-lg-column($cols, $len) {
+    padding-right: $gutter / 2;
+    padding-left: $gutter / 2;
+    position: relative;
+    @media (min-width: nth($screens, 4)) {
+        width: to-fixed(percentage(1 / $cols * $len));
+        float: left;
+    }
+}

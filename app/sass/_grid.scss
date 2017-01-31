@@ -1,0 +1,40 @@
+// Grid
+.container {
+    margin: 0 auto;
+    min-width: 320px;
+    padding-right: 15px;
+    padding-left: 15px;
+    &:after {
+        @extend %clearfix;
+    }
+    @media (min-width: 768px) {
+        width: 750px;
+    }
+    @media (min-width: 992px) {
+        width: 970px;
+    }
+    @media (min-width: 1200px) {
+        width: 1170px;
+    }
+}
+
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+    font-size: 0;
+    &:after {
+        @extend %clearfix;
+    }
+}
+
+[class*="col-"] {
+    width: 100%;
+    padding-right: $gutter / 2;
+    padding-left: $gutter / 2;
+    // position: relative;
+}
+
+@for $i from 1 through length($screens) {
+    @include createGrid(nth($screens, $i), nth($prefixes, $i), $columns);
+}
+// Grid (END)

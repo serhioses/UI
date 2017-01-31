@@ -1,0 +1,11 @@
+.footer {
+    padding: 16px 0;
+    background-color: get-color("mediumGray");
+}
+
+.copyright {
+    color: get-color("white");
+    font-size: get-font-size("base");
+    font-weight: 300;
+    text-align: center;
+}

@@ -1,0 +1,38 @@
+.header {
+    background-color: get-color("blue");
+    box-shadow: 0 2px 5px rgba(0,0,0,0.26);
+}
+
+.nav-trigger {
+    width: 48px;
+    height: 48px;
+    color: get-color("white");
+}
+
+.nav {
+    width: 256px;
+    height: 100%;
+    padding: 32px;
+    overflow-y: auto;
+    background-color: get-color("white");
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    z-index: 2;
+    @extend %transition;
+    &.bundle-container--active {
+        opacity: 1;
+        left: 0;
+    }
+    &__link {
+        display: block;
+        margin-bottom: 24px;
+        color: get-color("blue");
+        line-height: 18px;
+        font-size: get-font-size("medium");
+        &--active {
+            font-weight: bold;
+        }
+    }
+}

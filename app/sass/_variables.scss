@@ -1,0 +1,48 @@
+// Reset
+@import "../css/reset.css";
+
+// Mixins, extends
+@import "_mixins.scss";
+@import "_extends.scss";
+
+// Functions
+@import "_functions.scss";
+
+// Dimensions
+$columns: 12;
+$gutter: 30px;
+$screens: 100px 544px 768px 992px 1200px;
+$prefixes: "always" "mb" "sm" "md" "lg";
+
+// Fonts
+// Roboto
+@include font-face('robotobold', 'roboto-bold');
+@include font-face('robotoregular', 'roboto-regular');
+@include font-face('robotothin', 'roboto-thin');
+@include font-face('robotoitalic', 'roboto-italic');
+@include font-face('robotomedium', 'roboto-medium');
+// Roboto (END)
+
+$fonts: (
+    "main": "Roboto, Helvetica, Arial, sans-serif"
+);
+
+$fontSizes: (
+    "ultraSmall": 0.75rem,
+    "small": 0.875rem,
+    "base": 1rem,
+    "medium": 1.125rem,
+    "big": 1.25rem,
+    "large": 1.375rem,
+    "ultraLarge": 1.5rem
+);
+
+// Colors
+$colors: (
+    "white": #fff,
+    "lightGray": #ccc,
+    "mediumGray": #757575,
+    "darkGray": #444,
+    "black": #252525,
+    "blue": #3949AB
+);
