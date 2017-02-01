@@ -1,9 +1,12 @@
 .settings {
     margin-bottom: 32px;
     &__title {
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         line-height: 24px;
         font-size: get-font-size("base");
+        &--location_inside {
+            padding-top: 4px;
+        }
     }
 }
 

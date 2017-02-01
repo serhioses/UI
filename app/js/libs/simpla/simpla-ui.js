@@ -29,19 +29,28 @@
             COOLDOWN = 1;
 
         function animate (effect, current, hide) {
-            var self = this;
+            var self = this,
+                hasClass = current.dropdown.hasClass('dd-dropdown--opened');
 
-            if (current.dropdown.hasClass('dd-dropdown--opened') || hide) {
-                self._defaults.beforeClose(self._container);
+            if (hasClass || hide) {
+                if (hasClass) {
+                    self._defaults.beforeClose(self._container);
+                }
+                
                 current.dropdown.removeClass('dd-dropdown--pressed');
                 current.trigger.removeClass('dd-trigger--active');
 
                 current.drop[effects[effect][1]]({
-                    duration: self._defaults.animationDuration,
+                    duration: parseInt(self._defaults.animationDuration, 10) || 0,
                     done: function () {
+                        var hasClass = current.dropdown.hasClass('dd-dropdown--opened');
+
                         current.dropdown.removeClass('dd-dropdown--opened');
                         current.drop.css(resetCSS);
-                        self._defaults.afterClose(self._container);
+
+                        if (hasClass) {
+                            self._defaults.afterClose(self._container);
+                        }
                     }
                 });
             } else {
@@ -50,7 +59,7 @@
                 current.trigger.addClass('dd-trigger--active');
 
                 current.drop[effects[effect][0]]({
-                    duration: self._defaults.animationDuration,
+                    duration: parseInt(self._defaults.animationDuration, 10) || 0,
                     done: function () {
                         current.dropdown.addClass('dd-dropdown--opened');
                         current.drop.css(resetCSS);
@@ -98,7 +107,8 @@
                 effect = 'toggle';
             }
 
-            isCustom = (effect in customEffects);
+            // isCustom = (effect in customEffects);
+            isCustom = Object.prototype.hasOwnProperty.call(customEffects, effect);
 
             return {
                 effect: effect,
@@ -130,7 +140,6 @@
 
             self._dropdowns.forEach(function (item) {
                 if (item !== current && item.level === level && item.dropdown.hasClass('dd-dropdown--opened')) {
-                    console.log(item);
                     effectObj = getEffect.call(self);
                     effectObj.isCustom ? customEffects[effectObj.effect].call(self, item, true) : animate.call(self, effectObj.effect, item, true);
                 }
@@ -144,7 +153,6 @@
                     
                     item._container.find('.dd-dropdown').removeClass('dd-dropdown--opened dd-dropdown--active dd-dropdown--pressed dd-trigger--active');
                     item._container.find('.dd-drop').css(resetCSS);
-
                     item._container.find('.dd-trigger').removeClass('dd-trigger--active');
 
                     item._defaults.afterClose(item._container);
@@ -188,7 +196,7 @@
 
                     setTimeout(function () {
                         self._state = null;
-                    }, self._defaults.animationDuration);
+                    }, parseInt(self._defaults.animationDuration, 10) || 0);
                 }
 
                 target = $(e.target).closest('.' + self._defaults.trigger);
@@ -265,6 +273,7 @@
             if (simpla.helpers.getClass(options) === 'Object') {
                 simpla.helpers.extend(options, defaults);
             }
+            defaults.animationDuration = parseInt(defaults.animationDuration, 10) || 0;
 
             Object.defineProperty(this, '_defaults', {
                 get: function () {
@@ -307,9 +316,14 @@
             firstDD = this._container.find('.dd-dropdown:first');
             // Find ajacent dropdowns
             siblings = firstDD.siblings('.dd-dropdown');
-            // Join the first dropdown with the ajacent dropdowns so we get root (parent) dropdowns
+            // Join the first dropdown with the ajacent dropdowns so we get the root (parent) dropdowns
             rootDD = firstDD.add(siblings);
-            this._rootDD = rootDD;
+
+            Object.defineProperty(this, '_rootDD', {
+                get: function () {
+                    return rootDD;
+                }
+            });
 
             return this;
         };

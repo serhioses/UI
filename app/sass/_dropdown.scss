@@ -1,13 +1,3 @@
 .dd-trigger {
     cursor: pointer;
 }
-.dropdown {
-    ul {
-        display: none;
-    }
-    .dd-dropdown--opened {
-        & > ul {
-            display: block;
-        }
-    }
-}

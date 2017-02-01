@@ -72,16 +72,22 @@ select {
 
 .title {
     display: block;
-    margin-bottom: 24px;
+    margin-bottom: 36px;
     color: get-color("darkGray");
-    line-height: 32px;
-    font-size: get-font-size("ultraLarge");
+    line-height: 48px;
+    font-size: 32px;
     font-weight: bold;
+    &--small {
+        margin-bottom: 28px;
+        line-height: 40px;
+        font-size: 26px;
+        font-weight: normal;
+    }
 }
 
 .subtitle {
     display: block;
-    margin-bottom: 18px;
+    margin-bottom: 24px;
     color: get-color("mediumGray");
     line-height: 24px;
     font-size: get-font-size("big");

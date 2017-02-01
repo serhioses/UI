@@ -33,6 +33,7 @@
         font-size: get-font-size("medium");
         &--active {
             font-weight: bold;
+            text-decoration: underline;
         }
     }
 }

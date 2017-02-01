@@ -1,0 +1,108 @@
+.categories {
+    // padding: 0 16px;
+    background-color: get-color("white");
+}
+
+.category {
+    &--level {
+        &_1 {
+            border-bottom: 1px solid get-color("lightGray");
+        }
+        &_2 {
+            &:last-child .category__name {
+                border-bottom: 0;
+            }
+        }
+        &_2 {
+            &.dd-dropdown--pressed:not(:last-child) {
+                border-bottom: 1px solid get-color("lightGray");
+            }
+        }
+    }
+    &__drop {
+        display: none;
+    }
+    &.dd-dropdown--opened {
+        & > .category__drop {
+            display: block;
+        }
+    }
+    &.dd-dropdown--pressed {
+        & > .category__name {
+            &--level {
+                &_1 {
+                    box-shadow: 0px 4px 4px -4px rgba(0,0,0,0.25);
+                }
+                &_2 {
+                    border-bottom: 0;
+                    box-shadow: 0px 4px 4px -4px rgba(0,0,0,0.4);
+                }
+            }
+        }
+    }
+    &__subcategories {
+        &--level {
+            &_1 {
+               background-color: darken(get-color("white"), 3%);
+            }
+            &_2 {
+                padding: 12px 0;
+                background-color: darken(get-color("white"), 5%);
+            }
+        }
+    }
+    &__name {
+        display: block;
+        padding-right: 48px;
+        color: get-color("blue");
+        position: relative;
+        &--level {
+            &_1 {
+                line-height: 54px;
+                font-size: get-font-size("medium");
+            }
+            &_2 {
+                border-bottom: 1px solid get-color("lightGray");
+                padding-left: 16px;
+                line-height: 42px;
+                font-size: get-font-size("base");
+            }
+            &_3 {
+                padding-left: 32px;
+                line-height: 32px;
+                font-size: get-font-size("small");
+            }
+        }
+    }
+    &__trigger {
+        width: 48px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        &:before, &:after {
+            content: "";
+            background-color: get-color("mediumGray");
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+        &:before {
+            margin-top: -6px;
+            margin-left: -1px;
+            width: 2px;
+            height: 12px;
+        }
+        &:after {
+            margin-top: -1px;
+            margin-left: -6px;
+            width: 12px;
+            height: 2px;
+        }
+        &.dd-trigger--active {
+            &:before {
+                transform: rotateZ(90deg);
+            }
+        }
+    }
+}
