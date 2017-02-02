@@ -75,12 +75,11 @@ export default class Form extends React.Component {
                 update: update
             })
         );
+        
         return (
-            <main className="main">
-                <form id="form">
-                    {childrenWithProps}
-                </form>
-            </main>
+            <form id="form">
+                {childrenWithProps}
+            </form>
         );
     }
 }

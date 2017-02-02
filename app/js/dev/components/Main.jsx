@@ -11,9 +11,9 @@ export default class Main extends React.Component {
         return (
             <div className="wrapper">
                 <Nav/>
-                <Form>
+                <main className="main">
                     {this.props.children}
-                </Form>
+                </main>
                 <Footer/>
             </div>
         );

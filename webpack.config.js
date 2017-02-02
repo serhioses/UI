@@ -29,6 +29,7 @@ module.exports = {
         alias: {
             Main: path + '/components/Main.jsx',
             Nav: path + '/components/Nav.jsx',
+            Home: path + '/components/Home.jsx',
             Form: path + '/components/Form.jsx',
             Dropdown: path + '/components/Dropdown.jsx',
             Tabs: path + '/components/Tabs.jsx',

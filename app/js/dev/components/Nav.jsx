@@ -21,7 +21,8 @@ export default class Nav extends React.Component {
                         </svg>
                     </button>
                     <nav className="nav" data-bundle-outside="true">
-                        <IndexLink className="nav__link" activeClassName="nav__link--active" to="/">Dropdown</IndexLink>
+                        <IndexLink className="nav__link" activeClassName="nav__link--active" to="/">Home</IndexLink>
+                        <Link className="nav__link" activeClassName="nav__link--active" to="/dropdown">Dropdown</Link>
                         <Link className="nav__link" activeClassName="nav__link--active" to="/tabs">Tabs</Link>
                     </nav>
                     <div className="overlay" data-bundle-outside="true"></div>
