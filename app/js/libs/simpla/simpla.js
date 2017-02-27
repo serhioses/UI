@@ -14,7 +14,11 @@
 }(window, function ($) {
     'use strict';
 
-    var simpla = {};
+    var simpla = {
+        toString: function () {
+            return '[object Simpla]';
+        }
+    };
 
     // Storage for globals
     simpla.globals = {};
@@ -24,9 +28,10 @@
     simpla.storage = {};
 
     simpla.storage.dropdowns = [];
-
     simpla.storage.bundles = [];
-
+    simpla.storage.spinners = [];
+    simpla.storage.staticTabs = [];
+    simpla.storage.adaptiveTabs = [];
     simpla.storage.cache = {};
     // Storages (END)
 
@@ -128,30 +133,6 @@
 
     // Decorators
     simpla.decorators = {};
-
-    // Store of timers by names
-    simpla.decorators.timers = {};
-
-    // This decorator is usefull when we want to get time of a function executing
-    /*
-        @param timerName {string} - a key to store time in the timers object
-        @param func {function} - a function that time of executing we want to get
-     */
-    simpla.decorators.timingDecorator = function (timerName, func) {
-        return function () {
-            var start = performance.now(), result;
-
-            if (!simpla.decorators.timers[timerName]) {
-                simpla.decorators.timers[timerName] = 0;
-            }
-
-            result = func.apply(this, arguments);
-
-            simpla.decorators.timers[timerName] += performance.now() - start;
-
-            return result;
-        };
-    };
 
     // This function is to calling passed function no more then once per "delay" ms
     /*
@@ -260,6 +241,7 @@
 
     // Form
     simpla.form = {};
+    simpla.form.firstInvalidField = null;
 
     // Checks if the given pattern exists in the given string
     /*
@@ -285,15 +267,15 @@
         }
     };
 
-    simpla.form.setInvalid = function (el , e, scrollToInvalid, scrollCorrection, showNotice, noticeID, noticeCorrection) {
-        el.addClass('js-input--invalid').removeClass('js-input--valid').focus();
+    simpla.form.setInvalid = function (el , e, noticeID, options) {
+        el.addClass('js-input--invalid').removeClass('js-input--valid');
         e.preventDefault();
 
-        if (scrollToInvalid) {
-            simpla.DOM.scrollBody(el, scrollCorrection);
+        if (options.scrollToInvalid && simpla.form.firstInvalidField) {
+            simpla.DOM.scrollBody(simpla.form.firstInvalidField, {}, options.scrollCorrection);
         }
-        if (showNotice) {
-            simpla.DOM.showNotice(noticeID, 'notice', el, el.data('notice'), noticeCorrection);
+        if (options.showNotice) {
+            simpla.DOM.showNotice(noticeID, 'notice', el, el.data('notice'));
         }
     };
 
@@ -301,17 +283,31 @@
     /*
         @param form {dom element} - a form we need to validate
         @param e {object} - an event object
-        @param scrollToInvalid {boolean} - if set true, then the body will be scrolled to invalid input
-        @param scrollCorrection {number} - a correction of scrollig that will be substracted
-        @param showNotice {boolean} - if set true, a notice will be shown below an invalid input
+        @param options.scrollToInvalid {boolean} - if set true, then the body will be scrolled to invalid input
+        @param options.scrollCorrection {number} - a correction of scrollig that will be substracted
+        @param options.showNotice {boolean} - if set true, a notice will be shown below an invalid input
     */
-    simpla.form.validate = function (form, e, scrollToInvalid, scrollCorrection, showNotice, noticeCorrection) {
-        var pattern, isChecked, val, type, notice, result, self;
+
+    simpla.form.validate = function (form, e, options) {
+        var defaults = {
+                scrollToInvalid: true,
+                scrollCorrection: 0,
+                showNotice: true,
+                stopOnInvalid: true,
+                callback: $.noop
+            }, result;
+
+        if (simpla.helpers.getClass(options) === 'Object') {
+            simpla.helpers.extend(options, defaults);
+        }
             
         form.find(':input').each(function () {
+            var pattern, isChecked, val, type, noticeID, self;
+
             type = this.type;
             val = $(this).val();
             self = $(this);
+            noticeID = 'notice-' + self.data('noticeid');
 
             switch (type) {
                 case 'text':
@@ -323,39 +319,63 @@
                     pattern = $(this).data('pattern');
                     if (pattern) {
                         switch (pattern) {
-                            case 'string':
+                            case 'string': {
                                 if (val.length) {
-                                    simpla.form.setValid(self, showNotice, 'notice-string');
+                                    simpla.form.setValid(self, defaults.showNotice, noticeID);
                                     result = true;
+                                    simpla.form.firstInvalidField = null;
+                                    defaults.callback();
                                 } else {
-                                    simpla.form.setInvalid(self, e, scrollToInvalid, scrollCorrection, showNotice, 'notice-string', noticeCorrection);
+                                    if (!simpla.form.firstInvalidField) {
+                                        simpla.form.firstInvalidField = self;
+                                    }
+                                    simpla.form.setInvalid(self, e, noticeID, defaults);
                                     result = false;
-
-                                    return false;
+                                    defaults.callback();
+                                    if (defaults.stopOnInvalid) {
+                                        return false;
+                                    }
                                 }
-                            break;
-                            case 'email':
+                                break;
+                            }
+                            case 'email': {
                                 if (simpla.form.isEmail(val)) {
-                                    simpla.form.setValid(self, showNotice, 'notice-email');
+                                    simpla.form.setValid(self, defaults.showNotice, noticeID);
                                     result = true;
+                                    simpla.form.firstInvalidField = null;
+                                    defaults.callback();
                                 } else {
-                                    simpla.form.setInvalid(self, e, scrollToInvalid, scrollCorrection, showNotice, 'notice-email', noticeCorrection);
+                                    if (!simpla.form.firstInvalidField) {
+                                        simpla.form.firstInvalidField = self;
+                                    }
+                                    simpla.form.setInvalid(self, e, noticeID, defaults);
                                     result = false;
-
-                                    return false;
+                                    defaults.callback();
+                                    if (defaults.stopOnInvalid) {
+                                        return false;
+                                    }
                                 }
-                            break;
-                            default:
+                                break;
+                            }
+                            default: {
                                 if (simpla.form.isPattern(pattern, val)) {
-                                    simpla.form.setValid(self, showNotice, 'notice-pattern');
+                                    simpla.form.setValid(self, defaults.showNotice, noticeID);
                                     result = true;
+                                    simpla.form.firstInvalidField = null;
+                                    defaults.callback();
                                 } else {
-                                    simpla.form.setInvalid(self, e, scrollToInvalid, scrollCorrection, showNotice, 'notice-pattern', noticeCorrection);
+                                    if (!simpla.form.firstInvalidField) {
+                                        simpla.form.firstInvalidField = self;
+                                    }
+                                    simpla.form.setInvalid(self, e, noticeID, defaults);
                                     result = false;
-
-                                    return false;
+                                    defaults.callback();
+                                    if (defaults.stopOnInvalid) {
+                                        return false;
+                                    }
                                 }
-                            break;
+                                break;
+                            }
                         }
                     }
                 }
@@ -367,15 +387,22 @@
                         if (self.prop('checked') === isChecked) {
                             simpla.form.setValid(self);
                             result = true;
+                            simpla.form.firstInvalidField = null;
+                            defaults.callback();
                         } else {
-                            simpla.form.setInvalid(self, e, scrollToInvalid, scrollCorrection);
+                            if (!simpla.form.firstInvalidField) {
+                                simpla.form.firstInvalidField = self;
+                            }
+                            simpla.form.setInvalid(self, e, noticeID, defaults);
                             result = false;
-
-                            return false;
+                            defaults.callback();
+                            if (defaults.stopOnInvalid) {
+                                return false;
+                            }
                         }
                     }
+                    break;
                 }
-                break;
             }
         });
         
@@ -417,22 +444,13 @@
         @param className {string} - a class of a notice
         @param target {dom element} - a destination (field) where a notice will be placed
         @param text {string} - a text that will be placed into a notice
-        @param correction {number} - a correction of top offset with regard to a destination element
     */
-    simpla.DOM.showNotice = function (id, className, target, text, correction) {
-        var notice = $('<div/>'),
-            top, left;
+    simpla.DOM.showNotice = function (id, className, target, text) {
+        var notice = $('<div/>');
 
         if (target.length && !$('#' + id).length) {
-            top = target.offset().top + target.outerHeight();
-            left = target.offset().left;
-
             notice.attr('id', id);
-            notice.text(text).addClass('js-notice ' + className).appendTo($('body'));
-            notice.css({
-                top: top + (parseFloat(correction) || 0) + 'px',
-                left: left + 'px'
-            });
+            notice.text(text).addClass('js-notice ' + className).appendTo(target.parent());
             setTimeout(function () {
                 notice.addClass('js-notice--active');
             }, 4);

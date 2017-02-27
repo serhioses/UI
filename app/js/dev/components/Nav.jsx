@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link, IndexLink} from 'react-router';
-import ui from '../ui/ui';
+import simpla from 'simpla';
+import 'simplaUI';
 
 export default class Nav extends React.Component {
     constructor(props) {
@@ -9,6 +10,10 @@ export default class Nav extends React.Component {
     componentDidMount() {
         var nav = new simpla.UI.Bundle('nav-trigger', '');
         nav.init();
+
+        $('.nav__link:not(.nav__link--active)').click(function () {
+            $('.bundle-overlay--visible').trigger('click');
+        });
     }
     render() {
         return (
@@ -24,6 +29,7 @@ export default class Nav extends React.Component {
                         <IndexLink className="nav__link" activeClassName="nav__link--active" to="/">Home</IndexLink>
                         <Link className="nav__link" activeClassName="nav__link--active" to="/dropdown">Dropdown</Link>
                         <Link className="nav__link" activeClassName="nav__link--active" to="/tabs">Tabs</Link>
+                        <Link className="nav__link" activeClassName="nav__link--active" to="/spinner">Spinner</Link>
                     </nav>
                     <div className="overlay" data-bundle-outside="true"></div>
                 </div>

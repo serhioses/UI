@@ -1,22 +1,23 @@
 var webpack = require('webpack');
-var path = 'app/js/dev';
+var jsFolder = 'app/js/dev';
 
 module.exports = {
     cache: true,
     debug: true,
     entry: [
         'script!jquery/dist/jquery.min.js',
-        'script!./app/js/libs/simpla/simpla.js',
-        'script!./app/js/libs/simpla/simpla-ui.js',
-        path + '/app.jsx'
+        // 'script!./app/js/libs/simpla/simpla.js',
+        // 'script!./app/js/libs/simpla/simpla-ui.js',
+        jsFolder + '/app.jsx'
     ],
     externals: {
         jquery: 'jQuery'
     },
     plugins: [
         new webpack.ProvidePlugin({
-            '$': 'jquery',
-            'jQuery': 'jquery'
+            $: 'jquery',
+            jQuery: 'jquery',
+            // simpla: 'app/js/libs/simpla/simpla.js'
         })
     ],
     output: {
@@ -27,13 +28,17 @@ module.exports = {
         extensions: ['', '.js', '.jsx'],
         root: __dirname,
         alias: {
-            Main: path + '/components/Main.jsx',
-            Nav: path + '/components/Nav.jsx',
-            Home: path + '/components/Home.jsx',
-            Form: path + '/components/Form.jsx',
-            Dropdown: path + '/components/Dropdown.jsx',
-            Tabs: path + '/components/Tabs.jsx',
-            Footer: path + '/components/Footer.jsx'
+            simplaUI: 'app/js/libs/simpla/simpla-ui.js',
+            simpla: 'app/js/libs/simpla/simpla.js',
+            Main: jsFolder + '/components/Main.jsx',
+            Nav: jsFolder + '/components/Nav.jsx',
+            Home: jsFolder + '/components/Home.jsx',
+            Form: jsFolder + '/components/Form.jsx',
+            UI: jsFolder + '/components/UI.jsx',
+            Dropdown: jsFolder + '/components/Dropdown.jsx',
+            Tabs: jsFolder + '/components/Tabs.jsx',
+            Spinner: jsFolder + '/components/Spinner.jsx',
+            Footer: jsFolder + '/components/Footer.jsx'
         }
     },
     module: {

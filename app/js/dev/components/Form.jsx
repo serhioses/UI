@@ -8,7 +8,9 @@ export default class Form extends React.Component {
 
         this.state = {
             update: {
-                dropdown: {}
+                dropdown: {},
+                spinner: {},
+                tabs: {}
             }
         };
     }
@@ -20,12 +22,7 @@ export default class Form extends React.Component {
     handleChange(e) {
         var target = $(e.target),
             uiType = target.data('ui'),
-            propName, propType, updates;
-
-        // if (target[0].type.toLowerCase() === 'text' || target[0].type.toLowerCase() === 'number') {
-        //     console.log('input typing');
-        //     return;
-        // }
+            propName, propType, indexes, updates;
 
         if (!uiType) {
             console.log('uiType error');
@@ -34,6 +31,7 @@ export default class Form extends React.Component {
 
         propName = target.data('property');
         propType = target.data('property-type');
+        indexes = target.data('indexes');
         updates = this.state.update[uiType];
 
         if (!updates) {
@@ -41,7 +39,9 @@ export default class Form extends React.Component {
             return;
         }
 
+        updates = {};
         updates.property = propName;
+
         if (propType === 'boolean') {
             updates.value = target.is(':checked');
         } else if (propType === 'function') {
@@ -55,12 +55,29 @@ export default class Form extends React.Component {
         } else {
             updates.value = target.val();
         }
-        
+        updates.indexes = String(indexes).split(',');
+
         switch (uiType) {
             case 'dropdown': {
                 this.setState({
                     update: {
                         dropdown: updates
+                    }
+                });
+                break;
+            }
+            case 'spinner': {
+                this.setState({
+                    update: {
+                        spinner: updates
+                    }
+                });
+                break;
+            }
+            case 'tabs': {
+                this.setState({
+                    update: {
+                        tabs: updates
                     }
                 });
                 break;

@@ -31,6 +31,7 @@
         color: get-color("blue");
         line-height: 18px;
         font-size: get-font-size("medium");
+        transition: none;
         &--active {
             font-weight: bold;
             text-decoration: underline;

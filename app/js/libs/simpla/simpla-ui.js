@@ -9,6 +9,8 @@
 }(function (simpla) {
     'use strict';
 
+    var body = $('body');
+
     // User interface classes
     simpla.namespace('UI');
 
@@ -107,7 +109,6 @@
                 effect = 'toggle';
             }
 
-            // isCustom = (effect in customEffects);
             isCustom = Object.prototype.hasOwnProperty.call(customEffects, effect);
 
             return {
@@ -142,13 +143,17 @@
                 if (item !== current && item.level === level && item.dropdown.hasClass('dd-dropdown--opened')) {
                     effectObj = getEffect.call(self);
                     effectObj.isCustom ? customEffects[effectObj.effect].call(self, item, true) : animate.call(self, effectObj.effect, item, true);
+                    
+                    if (self._defaults.hideNested) {
+                        hideNested.call(self, item.id);
+                    }
                 }
             });
         }
 
-        function hideOnOtherDropsClick (container) {
+        function hideOnOtherDropdownsClick (container) {
             simpla.storage.dropdowns.forEach(function (item) {
-                if (item._container.data('otherdrops') && item._container !== container && item._container.find('.dd-dropdown--opened').length) {
+                if (item._container.data('other-dropdowns') && item._container !== container && item._container.find('.dd-dropdown--opened').length) {
                     item._defaults.beforeClose(item._container);
                     
                     item._container.find('.dd-dropdown').removeClass('dd-dropdown--opened dd-dropdown--active dd-dropdown--pressed dd-trigger--active');
@@ -161,7 +166,7 @@
         }
 
         function reinit (newOptions) {
-            var pos = simpla.storage.dropdowns.indexOf(self);
+            var pos = simpla.storage.dropdowns.indexOf(this);
 
             if (pos !== -1) {
                 simpla.storage.dropdowns.splice(pos, 1);
@@ -169,80 +174,101 @@
             this._dropdowns.length = 0;
             
             if (simpla.helpers.getClass(newOptions) === 'Object') {
-                simpla.helpers.extend(newOptions, this._defaults);
+                // simpla.helpers.extend(newOptions, this._defaults);
+                $.extend(this._defaults, newOptions);
             }
-
-            this.init();
+            createDropdownsArray.call(this, this._rootDD);
+            simpla.storage.dropdowns.push(this);
         }
 
         function init () {
-            var self = this;
-
-            createDropdownsArray.call(self, self._rootDD);
-            simpla.storage.dropdowns.push(self);
-
-            self._container.click(function (e) {
-                var current, effectObj, target, pos, i;
-
-                function launch () {
-                    effectObj.isCustom ? customEffects[effectObj.effect].call(self, current, false) : animate.call(self, effectObj.effect, current, false);
-                
-                    if (self._defaults.hideSiblings) {
-                        hideSiblings.call(self, current, current.level);
-                    }
-                    if (self._defaults.hideNested && !current.dropdown.hasClass('dd-dropdown--pressed')) {
-                        hideNested.call(self, current.id);
-                    }
-
-                    setTimeout(function () {
-                        self._state = null;
-                    }, parseInt(self._defaults.animationDuration, 10) || 0);
-                }
-
-                target = $(e.target).closest('.' + self._defaults.trigger);
-                if (!target.length) {
-                    return;
-                }
-
-                e.preventDefault();
-
-                if (self._state) {
-                    return;
-                }
-
-                hideOnOtherDropsClick.call(self, self._container);
-
-                self._state = COOLDOWN;
-                current = target.closest('.dd-dropdown');
-
-                for (i = 0; i < self._dropdowns.length; i++) {
-                    if (self._dropdowns[i].dropdown[0] === current[0]) {
-                        current = self._dropdowns[i];
-                        break;
-                    }
-                }
-
-                effectObj = getEffect.call(self);
-
-                if (typeof self._defaults.wait === 'function') {
-                    pos = simpla.storage.dropdowns.indexOf(self);
-
-                    if (pos !== -1) {
-                        simpla.storage.dropdowns.splice(pos, 1);
-                    }
-                    self._dropdowns.length = 0;
-
-                    $.when(self._defaults.wait(current)).then(function (a, b) {
-                        createDropdownsArray.call(self, self._rootDD);
-                        simpla.storage.dropdowns.push(self);
-                        launch();
-                    });
-                } else {
-                    launch();
-                }
-                
-            });
+            createDropdownsArray.call(this, this._rootDD);
+            simpla.storage.dropdowns.push(this);
         }
+        // Delegation
+        body.on('click', function (e) {
+            var target = $(e.target),
+                dropdownContainer = target.closest('[data-dropdown]'),
+                dropdown, i,
+                current, effectObj, pos,
+                launch;
+
+            if (!dropdownContainer.length) {
+                return;
+            }
+
+            for (i = 0; i < simpla.storage.dropdowns.length; i += 1) {
+                if (simpla.storage.dropdowns[i]._container[0] === dropdownContainer[0]) {
+                    dropdown = simpla.storage.dropdowns[i];
+                    break;
+                }
+            }
+
+            if (!dropdown) {
+                return;
+            }
+
+            target = $(e.target).closest('.' + dropdown._defaults.trigger);
+
+            if (!target.length) {
+                return;
+            }
+
+            if (dropdown._defaults.shouldPreventDefault) {
+                e.preventDefault();
+            }
+            
+            if (dropdown._state) {
+                return;
+            }
+
+            launch = function () {
+                effectObj.isCustom ? customEffects[effectObj.effect].call(dropdown, current, false) : animate.call(dropdown, effectObj.effect, current, false);
+            
+                if (dropdown._defaults.hideSiblings) {
+                    hideSiblings.call(dropdown, current, current.level);
+                }
+                if (dropdown._defaults.hideNested && !current.dropdown.hasClass('dd-dropdown--pressed')) {
+                    hideNested.call(dropdown, current.id);
+                }
+
+                setTimeout(function () {
+                    dropdown._state = null;
+                }, parseInt(dropdown._defaults.animationDuration, 10) || 0);
+            };
+
+            hideOnOtherDropdownsClick.call(dropdown, dropdown._container);
+
+            dropdown._state = COOLDOWN;
+            current = target.closest('.dd-dropdown');
+
+            for (i = 0; i < dropdown._dropdowns.length; i++) {
+                if (dropdown._dropdowns[i].dropdown[0] === current[0]) {
+                    current = dropdown._dropdowns[i];
+                    break;
+                }
+            }
+
+            effectObj = getEffect.call(dropdown);
+
+            if (typeof dropdown._defaults.wait === 'function') {
+                pos = simpla.storage.dropdowns.indexOf(dropdown);
+
+                if (pos !== -1) {
+                    simpla.storage.dropdowns.splice(pos, 1);
+                }
+                dropdown._dropdowns.length = 0;
+
+                $.when(dropdown._defaults.wait(current)).then(function (a, b) {
+                    createDropdownsArray.call(dropdown, dropdown._rootDD);
+                    simpla.storage.dropdowns.push(dropdown);
+                    launch();
+                });
+            } else {
+                launch();
+            }
+        });
+        // Delegation (END)
 
         simpla.UI.Dropdown = function (root, options) {
             var self = this,
@@ -256,6 +282,7 @@
             defaults.hideNested = true;
             defaults.trigger = 'dd-dropdown';
             defaults.effect = 'toggle';
+            defaults.shouldPreventDefault = true;
             defaults.animationDuration = 0;
             defaults.beforeOpen = $.noop;
             defaults.afterOpen = $.noop;
@@ -264,6 +291,7 @@
             defaults.wait = null;
             
             dropdowns = [];
+
             Object.defineProperty(this, '_dropdowns', {
                 get: function () {
                     return dropdowns;
@@ -271,8 +299,9 @@
             });
 
             if (simpla.helpers.getClass(options) === 'Object') {
-                simpla.helpers.extend(options, defaults);
+                $.extend(defaults, options);
             }
+
             defaults.animationDuration = parseInt(defaults.animationDuration, 10) || 0;
 
             Object.defineProperty(this, '_defaults', {
@@ -356,12 +385,12 @@
                 }
             }
 
-            $('body').on('touchstart click', hide);
+            body.on('touchstart click', hide);
         };
         simpla.UI.Dropdown.hideOutside = simpla.decorators.once(simpla.UI.Dropdown.hideOutside, null);
 
         simpla.UI.Dropdown.addEffect = function (name, handler) {
-            if (!(name in customEffects)) {
+            if (!Object.prototype.hasOwnProperty.call(customEffects, name)) {
                 customEffects[name] = handler;
             }
         };
@@ -378,11 +407,19 @@
             },
             enumerable: false
         });
+        Object.defineProperty(simpla.UI.Dropdown.prototype, 'close', {
+            value: function (effect, current, hide) {
+                animate.call(this, effect, current, hide);
+            },
+            enumerable: false
+        });
         // Dropdown (END)
     }());
 
     // Spinner
     (function () {
+        var currentSpinner;
+
         function update (action) {
             var self = this;
 
@@ -405,93 +442,316 @@
 
         function inc () {
             var amount = parseFloat(this._field.val()),
-                to = parseFloat(this._field.data('to')),
-                step = parseFloat(this._field.data('step'));
+                max = parseFloat(this._defaults.max),
+                step = parseFloat(this._defaults.step),
+                precision = parseInt(this._defaults.precision, 10) || 0;
 
-            if (amount < to) {
-                if ((to - amount) < step) {
-                    amount += (to - amount);
+            if (!isNaN(max) && amount < max) {
+                if ((max - amount) < step) {
+                    amount += (max - amount);
                 } else {
                     amount += step;
                 }
-                
-                this._field.val(amount);
+
+                this._field.val(amount.toFixed(precision));
+            } else if (isNaN(max)) {
+                amount += step;
+
+                this._field.val(amount.toFixed(precision));
             }
         }
 
         function dec () {
             var amount = parseFloat(this._field.val()),
-                from = parseFloat(this._field.data('from')),
-                step = parseFloat(this._field.data('step'));
+                min = parseFloat(this._defaults.min),
+                step = parseFloat(this._defaults.step),
+                precision = parseInt(this._defaults.precision, 10) || 0;
 
-            if (amount > from) {
-                if ((amount - step) < from) {
-                    amount -=  (amount - from);
+            if (!isNaN(min) && amount > min) {
+                if ((amount - step) < min) {
+                    amount -=  (amount - min);
                 } else {
                     amount -= step;
                 }
+
+                this._field.val(amount.toFixed(precision));
+            } else if (isNaN(min)) {
+                amount -= step;
                 
-                this._field.val(amount);
+                this._field.val(amount.toFixed(precision));
             }
+        }
+
+        function reinit (newOptions) {
+            var pos = simpla.storage.spinners.indexOf(this);
+
+            if (pos !== -1) {
+                simpla.storage.spinners.splice(pos, 1);
+            }
+
+            if (simpla.helpers.getClass(newOptions) === 'Object') {
+                $.extend(this._defaults, newOptions);
+            }
+
+            simpla.storage.spinners.push(this);
         }
 
         function init () {
-            var self = this,
-                previousValue;
-
-            this._plus.on('click', function (e) {
-                inc.call(self);
-                e.preventDefault();
-            });
-            this._minus.on('click', function (e) {
-                dec.call(self);
-                e.preventDefault();
-            });
-            this._field.on('change blur', function () {
-                var val = $(this).val();
-
-                if (parseFloat(val) > parseFloat(self._field.data('to'))) {
-                    self._field.val(self._field.data('to'));
-                } else if (parseFloat(val) < parseFloat(self._field.data('from'))) {
-                    self._field.val(self._field.data('from'));
-                } else if (val === '') {
-                    self._field.val(parseFloat(self._field.data('from')));
-                }
-            });
-            this._field.on('keydown', function (e) {
-                previousValue = $(this).val();
-            });
-            this._field.on('input', function (e) {
-                if (!simpla.helpers.isNumeric($(this).val()) && $(this).val() !== '' && $(this).val() !== '-') {
-                    $(this).val(previousValue);
-                }
-            });
-
-            if (this._defaults.launchOnClamp) {
-                this._plus.on('mousedown', function () {
-                    update.call(self, 'inc');
-                });
-                this._minus.on('mousedown', function () {
-                    update.call(self);
-                });
-                this._controls.on('mouseup mouseleave', function () {
-                    clearTimeout(self._timerID);
-                    clearInterval(self._intervalID);
-                });
-            }
+            simpla.storage.spinners.push(this);
         }
 
-        simpla.UI.Spinner = function (container, options) {
+        // Delegation
+        function findSpinner (e) {
+            var target = $(e.target),
+                spinnerContainer = target.closest('[data-spinner]'),
+                spinner, i;
+
+            if (!spinnerContainer.length) {
+                return false;
+            }
+
+            for (i = 0; i < simpla.storage.spinners.length; i += 1) {
+                if (simpla.storage.spinners[i]._container[0] === spinnerContainer[0]) {
+                    spinner = simpla.storage.spinners[i];
+                    break;
+                }
+            }
+
+            return spinner;
+        }
+        body.on('click', function (e) {
+            var spinner, target, control;
+
+            target = $(e.target);
+            control = target.closest('.sp-control');
+
+            if (!control.length) {
+                return;
+            }
+
+            spinner = findSpinner(e);
+
+            if (!spinner) {
+                return;
+            }
+
+            if (spinner._defaults.shouldPreventDefault) {
+                e.preventDefault();
+            }
+
+            if (control.hasClass('sp-control--plus')) {
+                inc.call(spinner);
+            } else if (control.hasClass('sp-control--minus')) {
+                dec.call(spinner);
+            }
+        });
+        body.on('change blur', function (e) {
+            var spinner, target, field,
+                val, min, max;
+
+            target = $(e.target);
+            field = target.closest('.sp-field');
+
+            if (!field.length) {
+                return;
+            }
+
+            spinner = findSpinner(e);
+
+            if (!spinner) {
+                return;
+            }
+
+            val = field.val();
+            min = parseFloat(spinner._defaults.min);
+            max = parseFloat(spinner._defaults.max);
+
+            if (parseFloat(val) > max && !isNaN(max)) {
+                field.val(max);
+            } else if (parseFloat(val) < min && !isNaN(min)) {
+                field.val(min);
+            } else if (!simpla.helpers.isNumeric(val)) {
+                field.val(spinner._defaults.initial);
+            }
+            field.val(parseFloat(field.val()).toFixed(parseInt(spinner._defaults.precision, 10) || 0));
+        });
+        body.on('keydown', function (e) {
+            var spinner, target, field;
+
+            target = $(e.target);
+            field = target.closest('.sp-field');
+
+            if (!field.length) {
+                return;
+            }
+
+            spinner = findSpinner(e);
+
+            if (!spinner) {
+                return;
+            }
+            spinner.previousValue = field.val();
+        });
+        body.on('input', function (e) {
+            var spinner, target, field,
+                min, max;
+
+            target = $(e.target);
+            field = target.closest('.sp-field');
+
+            if (!field.length) {
+                return;
+            }
+
+            spinner = findSpinner(e);
+
+            if (!spinner) {
+                return;
+            }
+
+            min = parseFloat(spinner._defaults.min),
+            max = parseFloat(spinner._defaults.max);
+
+            if (!simpla.helpers.isNumeric(field.val()) && field.val() !== '') {
+                if (field.val() === '-' && (min < 0 || max < 0)) {
+                    return;
+                }
+                field.val(spinner.previousValue);
+            }
+        });
+        body.on('touchstart mousedown', function (e) {
+            var isTouch = false;
+
+            return function (e) {
+                var spinner, target, control;
+
+                if (e.type === 'touchstart') {
+                    isTouch = true;
+                }
+                if (e.type === 'mousedown' && isTouch) {
+                    return;
+                }
+
+                target = $(e.target);
+                control = target.closest('.sp-control');
+
+                if (!control.length) {
+                    return;
+                }
+
+                spinner = findSpinner(e);
+
+                if (!spinner || !spinner._defaults.launchOnClamp) {
+                    return;
+                }
+
+                currentSpinner = spinner;
+
+                if (control.hasClass('sp-control--plus')) {
+                    update.call(spinner, 'inc');
+                } else if (control.hasClass('sp-control--minus')) {
+                    update.call(spinner, 'dec');
+                }
+            };
+        }());
+        body.on('touchend mouseup', function () {
+            var isTouch = false;
+
+            return function (e) {
+                var spinner;
+
+                if (e.type === 'touchend') {
+                    isTouch = true;
+                }
+                if (e.type === 'mouseup' && isTouch) {
+                    return;
+                }
+
+                spinner = findSpinner(e);
+
+                if (!spinner || !spinner._defaults.launchOnClamp) {
+                    return;
+                }
+
+                currentSpinner = null;
+                clearTimeout(spinner._timerID);
+                clearInterval(spinner._intervalID);
+            };
+        }());
+        body.on('touchmove mouseout', function () {
+            var isTouch = false;
+
+            return function (e) {
+                var spinner, touch, target,
+                    x, y, elUnderFinger;
+
+                if (e.type === 'touchmove') {
+                    isTouch = true;
+                }
+                if (e.type === 'mouseout' && isTouch) {
+                    return;
+                }
+
+                if (!currentSpinner || !currentSpinner._defaults.launchOnClamp) {
+                    return;
+                }
+
+                if (e.type === 'touchmove') {
+                    touch = e.touches[0];
+                    x = touch.clientX;
+                    y = touch.clientY;
+                    elUnderFinger = $(document.elementFromPoint(x, y));
+
+
+                    if (elUnderFinger.closest('[data-spinner]')[0] === currentSpinner._container[0]) {
+                        return;
+                    }
+
+                    clearTimeout(currentSpinner._timerID);
+                    clearInterval(currentSpinner._intervalID);
+                    currentSpinner = null;
+                } else {
+                    target = $(e.relatedTarget).closest('[data-spinner]');
+
+                    if (target[0] === currentSpinner._container[0]) {
+                        return;
+                    }
+
+                    clearTimeout(currentSpinner._timerID);
+                    clearInterval(currentSpinner._intervalID);
+                    currentSpinner = null;
+                }
+            };
+        }());
+        // Delegation (END)
+
+        simpla.UI.Spinner = function (root, options) {
             var defaults,
+                container,
+                controls, plus, minus, field,
                 timerID, intervalID;
 
             defaults = simpla.helpers.createMap();
+            defaults.min = null;
+            defaults.max = null;
+            defaults.initial = 0;
+            defaults.precision = 0;
+            defaults.step = 1;
             defaults.delay = 200;
             defaults.speed = 100;
+            defaults.shouldPreventDefault = true;
             defaults.launchOnClamp = true;
 
             timerID = null;
             intervalID = null;
+
+            this.previousValue = null;
+
+            container = $('#' + root);
+            controls = container.find('.sp-control');
+            plus = container.find('.sp-control--plus');
+            minus = container.find('.sp-control--minus');
+            field = container.find('.sp-field');
 
             Object.defineProperties(this, {
                 _timerID: {
@@ -525,28 +785,29 @@
                 },
                 _controls: {
                     get: function () {
-                        return  container.find('.sp-control');
+                        return  controls;
                     }
                 },
                 _plus: {
                     get: function () {
-                        return container.find('.sp-control--plus');
+                        return plus;
                     }
                 },
                 _minus: {
                     get: function () {
-                        return container.find('.sp-control--minus');
+                        return minus;
                     }
                 },
                 _field: {
                     get: function () {
-                        return container.find('.sp-field');
+                        return field;
                     }
                 }
             });
 
             if (simpla.helpers.getClass(options) === 'Object') {
-                simpla.helpers.extend(options, defaults);
+                // simpla.helpers.extend(options, defaults);
+                $.extend(defaults, options);
             }
 
             Object.defineProperty(this, '_defaults', {
@@ -558,6 +819,12 @@
             return this;
         };
 
+        Object.defineProperty(simpla.UI.Spinner.prototype, 'reinit', {
+            value: function (newOptions) {
+                reinit.call(this, newOptions);
+            },
+            enumerable: false
+        });
         Object.defineProperty(simpla.UI.Spinner.prototype, 'init', {
             value: function () {
                 init.call(this);
@@ -574,98 +841,118 @@
             fade: 'fadeToggle'
         };
 
-        // Tabs (general class)
-        (function () {
-            function setTab (type) {
-                var hasActiveTab = false,
-                    nav;
+        function findTabs (e, tabsType) {
+            var target = $(e.target),
+                tabsContainer = target.closest('[data-tabs]'),
+                tabs, i;
 
-                switch (type) {
-                    case 'desctop': {
-                        nav = 'desctopTabNav';
-                    }
+            if (!tabsContainer.length) {
+                return false;
+            }
+
+            for (i = 0; i < simpla.storage[tabsType].length; i += 1) {
+                if (simpla.storage[tabsType][i]._container[0] === tabsContainer[0]) {
+                    tabs = simpla.storage[tabsType][i];
                     break;
-                    case 'mobile': {
-                        nav = 'mobileTabNav';
-                    }
-                    break;
-                }
-
-                this['_' + nav].each(function () {
-                    if ($(this).hasClass('t-tab-nav-item--active')) {
-                        hasActiveTab = true;
-                        
-                        return false;
-                    }
-                });
-
-                if (!hasActiveTab) {
-                    this['_' + nav].first().trigger('click');
                 }
             }
 
-            simpla.UI.Tabs = function () {
-                return this;    
-            };
-
-            Object.defineProperty(simpla.UI.Tabs.prototype, 'setTab', {
-                value: function (type) {
-                    setTab.call(this, type);
-                }
-            });
-        }());
-        // Tabs (general class) (END)
+            return tabs;
+        }
 
         // Tabs (static)
         (function () {
-            function init () {
-                var self = this;
+            function switchTab (tabs) {
+                var that = $(this),
+                    id = that.data('tab'),
+                    effect = effects[tabs._defaults.effect] ? effects[tabs._defaults.effect] : 'toggle',
+                    classAction;
 
-                this._desctopTabNav.on('click', function (e) {
-                    var id = $(this).data('tab'),
-                        effect = effects[self._defaults.effect] ? effects[self._defaults.effect] : 'toggle',
-                        that = $(this), classAction;
-
-                    if (!self._isAnimationFinished || (that.hasClass('t-tab-nav-item--active') && !self._defaults.toggleTabs)) {
-                        return;
-                    }
-
-                    classAction = self._defaults.toggleTabs ? 'toggleClass' : 'addClass';
-
-                    self._defaults.beforeAnimation();
-                    self._isAnimationFinished = false;
-                    self._desctopTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active');
-                    that[classAction]('t-tab-nav-item--active');
-
-                    self._tabContent.not('[data-tab="' + id + '"]').removeClass('t-tab-item--active');
-                    self._tabContent.filter('[data-tab="' + id + '"]')
-                        .stop(true, true)[effect](self._defaults.speed, function () {
-                            self._isAnimationFinished = true;
-                            $(this)[classAction]('t-tab-item--active');
-                            self._defaults.afterAnimation();
-
-                            if (self._defaults.scrollToActive) {
-                                simpla.DOM.scrollBody(that, self._defaults.scrollCorrection);
-                            }
-                        });
-
-                    e.preventDefault();
-                });
-
-                if (this._defaults.setTab) {
-                    this._setTab('desctopTabNav');
+                if (!tabs._isAnimationFinished || (that.hasClass('t-tab-nav-item--active') && !tabs._defaults.toggleTabs)) {
+                    return;
                 }
+
+                classAction = tabs._defaults.toggleTabs ? 'toggleClass' : 'addClass';
+
+                tabs._defaults.beforeAnimation();
+                tabs._isAnimationFinished = false;
+
+                if (tabs._defaults.hideAjacentTabs) {
+                    tabs._desktopTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active');
+                    tabs._tabContent.not('[data-tab="' + id + '"]').removeClass('t-tab-item--active');
+                }
+                
+                that[classAction]('t-tab-nav-item--active');
+                
+                tabs._tabContent.filter('[data-tab="' + id + '"]')
+                    .stop(true, true)[effect](tabs._defaults.speed, function () {
+                        $(this)[classAction]('t-tab-item--active').removeAttr('style');
+
+                        tabs._isAnimationFinished = true;
+
+                        tabs._defaults.afterAnimation();
+
+                        if (tabs._defaults.scrollToActive) {
+                            simpla.DOM.scrollBody(that, {}, tabs._defaults.scrollCorrection);
+                        }
+                    });
             }
 
+            function reinit (newOptions) {
+                var pos = simpla.storage.staticTabs.indexOf(this);
+
+                if (pos !== -1) {
+                    simpla.storage.staticTabs.splice(pos, 1);
+                }
+                
+                if (simpla.helpers.getClass(newOptions) === 'Object') {
+                    $.extend(this._defaults, newOptions);
+                }
+
+                simpla.storage.staticTabs.push(this);
+            }
+
+            function init () {
+                simpla.storage.staticTabs.push(this);
+            }
+            // Delegation
+            body.on('click', function (e) {
+                var tabs, target, tabNavItem;
+
+                target = $(e.target);
+                tabNavItem = target.closest('.t-tab-nav-item');
+
+                if (!tabNavItem.length) {
+                    return;
+                }
+
+                tabs = findTabs(e, 'staticTabs');
+
+                if (!tabs) {
+                    return;
+                }
+
+                if (tabs._defaults.shouldPreventDefault) {
+                    e.preventDefault();
+                }
+
+                switchTab.call(tabNavItem, tabs);
+            });
+            // Delegation (END)
+
             simpla.UI.StaticTabs = function (container, options) {
-                var defaults, isAnimationFinished = true;
+                var defaults, isAnimationFinished = true,
+                    container,
+                    desktopTabNav,
+                    tabContent;
 
                 defaults = simpla.helpers.createMap();
 
                 defaults.effect = 'toggle';
                 defaults.speed = 0;
-                defaults.setTab = false;
+                defaults.shouldPreventDefault = true;
                 defaults.toggleTabs = false;
+                defaults.hideAjacentTabs = true;
                 defaults.scrollToActive = false;
                 defaults.scrollCorrection = 0;
                 defaults.beforeAnimation = $.noop;
@@ -684,21 +971,31 @@
                     }
                 });
 
+                container = $('#' + container);
+                desktopTabNav = container.find('.t-tab-nav-item');
+                tabContent = container.find('.t-tab-item');
+
                 Object.defineProperties(this, {
-                    _desctopTabNav: {
+                    _container: {
                         get: function () {
-                            return container.find('.t-tab-nav-item');
+                            return container;
+                        }
+                    },
+                    _desktopTabNav: {
+                        get: function () {
+                            return desktopTabNav;
                         }
                     },
                     _tabContent: {
                         get: function () {
-                            return ontainer.find('.t-tab-item');
+                            return tabContent;
                         }
                     }
                 });
 
                 if (simpla.helpers.getClass(options) === 'Object') {
-                    simpla.helpers.extend(options, defaults);
+                    // simpla.helpers.extend(options, defaults);
+                    $.extend(defaults, options);
                 }
 
                 Object.defineProperty(this, '_defaults', {
@@ -710,9 +1007,11 @@
                 return this;    
             };
 
-            simpla.UI.StaticTabs.prototype = Object.create(simpla.UI.Tabs.prototype);
-            simpla.UI.StaticTabs.prototype.constructor = simpla.UI.StaticTabs;
-
+            Object.defineProperty(simpla.UI.StaticTabs.prototype, 'reinit', {
+                value: function (newOptions) {
+                    reinit.call(this, newOptions);
+                }
+            });
             Object.defineProperty(simpla.UI.StaticTabs.prototype, 'init', {
                 value: function () {
                     init.call(this);
@@ -723,119 +1022,174 @@
 
         // Tabs (adaptive)
         (function () {
-            function init () {
-                var self = this;
+            function switchTabDesktop (tabs) {
+                var that = $(this),
+                    id = that.data('tab'),
+                    effect = effects[tabs._defaults.desktopEffect] ? effects[tabs._defaults.desktopEffect] : 'toggle',
+                    desktopClassAction, mobileClassAction;
 
-                this._desctopTabNav.on('click', function (e) {
-                    var id = $(this).data('tab'),
-                        effect = effects[self._defaults.desctopEffect] ? effects[self._defaults.desctopEffect] : 'toggle',
-                        that = $(this), classAction,
-                        desctopClassAction, mobileClassAction;
-
-                    if (!self._isAnimationFinished || (that.hasClass('t-tab-nav-item--active') && !self._defaults.toggleTabsDesctop && !self._defaults.toggleTabsMobile)) {
-                        return;
-                    }
-
-                    desctopClassAction = self._defaults.toggleTabsDesctop ? 'toggleClass' : 'addClass';
-                    mobileClassAction = self._defaults.toggleTabsMobile ? 'toggleClass' : 'addClass';
-
-                    self._defaults.beforeAnimation();
-                    self._isAnimationFinished = false;
-
-                    self._desctopTabNav
-                        .removeClass('t-tab-nav-item--active_desctop')
-                        .not('[data-tab="' + id + '"]')
-                        .removeClass('t-tab-nav-item--active');
-
-                    self._mobileTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active t-tab-nav-item--active_mobile');
-
-                    if (!self._defaults.toggleTabsMobile) {
-                        self._mobileTabNav.filter('[data-tab="' + id + '"]').addClass('t-tab-nav-item--active_mobile');
-                        self._tabContent.filter('[data-tab="' + id + '"]').addClass('t-tab-item--active_mobile');
-                    }
-
-                    that[desctopClassAction]('t-tab-nav-item--active');
-
-                    self._tabContent
-                        .not('[data-tab="' + id + '"]')
-                        .removeClass('t-tab-item--active t-tab-item--active_mobile t-tab-item--active_desctop');
-
-                    self._tabContent.filter('[data-tab="' + id + '"]')
-                        .stop(true, true)[effect](self._defaults.desctopSpeed, function () {
-                            self._isAnimationFinished = true;
-                            $(this)[desctopClassAction]('t-tab-item--active t-tab-item--active_desctop').removeAttr('style');
-                            self._defaults.afterAnimation();
-                        });
-
-                    e.preventDefault();
-                });
-
-                this._mobileTabNav.on('click', function (e) {
-                    var id = $(this).data('tab'),
-                        effect = effects[self._defaults.mobileEffect] ? effects[self._defaults.mobileEffect] : 'toggle',
-                        that = $(this), classAction,
-                        mobileClassAction, desctopClassAction;
-
-                    if (!self._isAnimationFinished || (that.hasClass('t-tab-nav-item--active') && !self._defaults.toggleTabsMobile && !self._defaults.toggleTabsDesctop)) {
-                        return;
-                    }
-
-                    mobileClassAction = self._defaults.toggleTabsMobile ? 'toggleClass' : 'addClass';
-                    desctopClassAction = self._defaults.toggleTabsDesctop ? 'toggleClass' : 'addClass';
-
-                    self._defaults.beforeAnimation();
-                    self._isAnimationFinished = false;
-
-                    self._desctopTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active t-tab-nav-item--active_desctop');
-                    self._mobileTabNav
-                        .removeClass('t-tab-nav-item--active_mobile')
-                        .not('[data-tab="' + id + '"]')
-                        .removeClass('t-tab-nav-item--active');
-
-                    if (!self._defaults.toggleTabsDesctop) {
-                        self._desctopTabNav.filter('[data-tab="' + id + '"]').addClass('t-tab-nav-item--active_desctop');
-                        self._tabContent.filter('[data-tab="' + id + '"]').addClass('t-tab-item--active_desctop');
-                    }
-
-                    that[mobileClassAction]('t-tab-nav-item--active');
-
-                    self._tabContent
-                        .not('[data-tab="' + id + '"]')
-                        .removeClass('t-tab-item--active t-tab-item--active_desctop t-tab-item--active_mobile');
-
-                    self._tabContent.filter('[data-tab="' + id + '"]')
-                        .stop(true, true)[effect](self._defaults.mobileSpeed, function () {
-                            self._isAnimationFinished = true;
-                            $(this)[mobileClassAction]('t-tab-item--active t-tab-item--active_mobile').removeAttr('style');
-
-                            if (self._defaults.scrollToActive) {
-                                simpla.DOM.scrollBody(that, self._defaults.scrollCorrection);
-                            }
-                            self._defaults.afterAnimation();
-                        });
-                    
-                    e.preventDefault();
-                });
-
-                if (this._defaults.setTab) {
-                    this._setTab(this._defaults.navName);
+                if (!tabs._isAnimationFinished || (that.hasClass('t-tab-nav-item--active') && !tabs._defaults.toggleTabsDesktop)) {
+                    return;
                 }
+
+                desktopClassAction = tabs._defaults.toggleTabsDesktop ? 'toggleClass' : 'addClass';
+                mobileClassAction = tabs._defaults.toggleTabsMobile ? 'toggleClass' : 'addClass';
+
+                tabs._defaults.beforeAnimation();
+                tabs._isAnimationFinished = false;
+
+                if (tabs._defaults.hideAjacentTabsDesktop) {
+                    tabs._desktopTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active');
+                    tabs._tabContent.not('[data-tab="' + id + '"]').removeClass('t-tab-item--active');
+                }
+
+                tabs._desktopTabNav.removeClass('t-tab-nav-item--active_desktop');
+
+                tabs._mobileTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active t-tab-nav-item--active_mobile');
+
+                if (!tabs._defaults.toggleTabsMobile) {
+                    // tabs._mobileTabNav.filter('[data-tab="' + id + '"]').addClass('t-tab-nav-item--active t-tab-nav-item--active_mobile');
+                    tabs._tabContent.filter('[data-tab="' + id + '"]').addClass('t-tab-item--active_mobile');
+                }
+                tabs._mobileTabNav.filter('[data-tab="' + id + '"]')[mobileClassAction]('t-tab-nav-item--active t-tab-nav-item--active_mobile');
+
+                that[desktopClassAction]('t-tab-nav-item--active');
+
+                tabs._tabContent
+                    .not('[data-tab="' + id + '"]')
+                    .removeClass('t-tab-item--active_mobile t-tab-item--active_desktop');
+
+                tabs._tabContent.filter('[data-tab="' + id + '"]')
+                    .stop(true, true)[effect](tabs._defaults.desktopSpeed, function () {
+                        $(this)[desktopClassAction]('t-tab-item--active t-tab-item--active_desktop').removeAttr('style');
+
+                        tabs._isAnimationFinished = true;
+
+                        tabs._defaults.afterAnimation();
+
+                        if (tabs._defaults.scrollToActiveDesktop) {
+                            simpla.DOM.scrollBody(that, {}, tabs._defaults.scrollCorrectionDesktop);
+                        }
+                    });
             }
 
+            function switchTabMobile (tabs) {
+                var that = $(this),
+                    id = $(this).data('tab'),
+                    effect = effects[tabs._defaults.mobileEffect] ? effects[tabs._defaults.mobileEffect] : 'toggle',
+                    mobileClassAction, desktopClassAction;
+
+                if (!tabs._isAnimationFinished || (that.hasClass('t-tab-nav-item--active') && !tabs._defaults.toggleTabsMobile)) {
+                    return;
+                }
+
+                mobileClassAction = tabs._defaults.toggleTabsMobile ? 'toggleClass' : 'addClass';
+                desktopClassAction = tabs._defaults.toggleTabsDesktop ? 'toggleClass' : 'addClass';
+
+                tabs._defaults.beforeAnimation();
+                tabs._isAnimationFinished = false;
+
+                if (tabs._defaults.hideAjacentTabsMobile) {
+                    tabs._mobileTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active');
+                    tabs._tabContent.not('[data-tab="' + id + '"]').removeClass('t-tab-item--active');
+                }
+
+                tabs._desktopTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active t-tab-nav-item--active_desktop');
+                tabs._mobileTabNav.removeClass('t-tab-nav-item--active_mobile');
+
+                if (!tabs._defaults.toggleTabsDesktop) {
+                    // tabs._desktopTabNav.filter('[data-tab="' + id + '"]').addClass('t-tab-nav-item--active t-tab-nav-item--active_desktop');
+                    tabs._tabContent.filter('[data-tab="' + id + '"]').addClass('t-tab-item--active_desktop');
+                }
+                tabs._desktopTabNav.filter('[data-tab="' + id + '"]')[desktopClassAction]('t-tab-nav-item--active t-tab-nav-item--active_desktop');
+
+                that[mobileClassAction]('t-tab-nav-item--active');
+
+                tabs._tabContent
+                    .not('[data-tab="' + id + '"]')
+                    .removeClass('t-tab-item--active_desktop t-tab-item--active_mobile');
+
+                tabs._tabContent.filter('[data-tab="' + id + '"]')
+                    .stop(true, true)[effect](tabs._defaults.mobileSpeed, function () {
+                        $(this)[mobileClassAction]('t-tab-item--active').removeAttr('style');
+
+                        tabs._isAnimationFinished = true;
+
+                        tabs._defaults.afterAnimation();
+
+                        if (tabs._defaults.scrollToActiveMobile) {
+                            simpla.DOM.scrollBody(that, {}, tabs._defaults.scrollCorrectionMobile);
+                        }
+                    });
+            }
+
+            function reinit (newOptions) {
+                var pos = simpla.storage.adaptiveTabs.indexOf(this);
+
+                if (pos !== -1) {
+                    simpla.storage.adaptiveTabs.splice(pos, 1);
+                }
+                
+                if (simpla.helpers.getClass(newOptions) === 'Object') {
+                    $.extend(this._defaults, newOptions);
+                }
+
+                simpla.storage.adaptiveTabs.push(this);
+            }
+
+            function init () {
+                simpla.storage.adaptiveTabs.push(this);
+            }
+
+            // Delegation
+            body.on('click', function (e) {
+                var tabs, target, tabNavItem;
+
+                target = $(e.target);
+                tabNavItem = target.closest('.t-tab-nav-item');
+
+                if (!tabNavItem.length) {
+                    return;
+                }
+
+                tabs = findTabs(e, 'adaptiveTabs');
+
+                if (!tabs) {
+                    return;
+                }
+
+                if (tabs._defaults.shouldPreventDefault) {
+                    e.preventDefault();
+                }
+
+                if (tabNavItem.hasClass('t-tab-nav-item--desktop')) {
+                    switchTabDesktop.call(tabNavItem, tabs);
+                } else if (tabNavItem.hasClass('t-tab-nav-item--mobile')) {
+                    switchTabMobile.call(tabNavItem, tabs);
+                }
+            });
+            // Delegation (END)
+
             simpla.UI.AdaptiveTabs = function (container, options) {
-                var defaults, isAnimationFinished = true;
+                var defaults, isAnimationFinished = true,
+                    container,
+                    desktopTabNav, mobileTabNav,
+                    tabContent;
                 
                 defaults = simpla.helpers.createMap();
 
-                defaults.desctopEffect = 'toggle';
-                defaults.desctopSpeed = 0;
+                defaults.desktopEffect = 'toggle';
+                defaults.desktopSpeed = 0;
+                defaults.shouldPreventDefault = true;
                 defaults.mobileEffect = 'slide';
                 defaults.mobileSpeed = 300;
-                defaults.scrollToActive = true;
-                defaults.scrollCorrection = null;
-                defaults.setTab = false;
-                defaults.navName = null;
-                defaults.toggleTabsDesctop = false;
+                defaults.hideAjacentTabsMobile = true;
+                defaults.hideAjacentTabsDesktop = true;
+                defaults.scrollToActiveMobile = true;
+                defaults.scrollCorrectionMobile = 0;
+                defaults.scrollToActiveDesktop = false;
+                defaults.scrollCorrectionDesktop = 0;
+                defaults.toggleTabsDesktop = false;
                 defaults.toggleTabsMobile = true;
                 defaults.beforeAnimation = $.noop;
                 defaults.afterAnimation = $.noop;
@@ -853,26 +1207,36 @@
                     }
                 });
 
+                container = $('#' + container);
+                desktopTabNav = container.find('.t-tab-nav-item--desktop');
+                mobileTabNav = container.find('.t-tab-nav-item--mobile');
+                tabContent = container.find('.t-tab-item');
+
                 Object.defineProperties(this, {
-                    _desctopTabNav: {
+                    _container: {
                         get: function () {
-                            return container.find('.t-tab-nav-item');
+                            return container;
+                        }
+                    },
+                    _desktopTabNav: {
+                        get: function () {
+                            return desktopTabNav;
                         }
                     },
                     _mobileTabNav: {
                         get: function () {
-                            return container.find('.t-tab-content-nav-item');
+                            return mobileTabNav;
                         }
                     },
                     _tabContent: {
                         get: function () {
-                            return container.find('.t-tab-item');
+                            return tabContent;
                         }
                     }
                 });
 
                 if (simpla.helpers.getClass(options) === 'Object') {
-                    simpla.helpers.extend(options, defaults);
+                    $.extend(defaults, options);
                 }
                 Object.defineProperty(this, '_defaults', {
                     get: function () {
@@ -883,9 +1247,11 @@
                 return this;
             };
 
-            simpla.UI.AdaptiveTabs.prototype = Object.create(simpla.UI.Tabs.prototype);
-            simpla.UI.AdaptiveTabs.prototype.constructor = simpla.UI.AdaptiveTabs;
-
+            Object.defineProperty(simpla.UI.AdaptiveTabs.prototype, 'reinit', {
+                value: function (newOptions) {
+                    reinit.call(this, newOptions);
+                }
+            });
             Object.defineProperty(simpla.UI.AdaptiveTabs.prototype, 'init', {
                 value: function () {
                     init.call(this);
@@ -907,7 +1273,7 @@
             this._container[action + 'Class'](containerCls);
 
             if (this._trigger.data('body')) {
-                $('body')[action + 'Class'](bodyCls);
+                body[action + 'Class'](bodyCls);
             }
             if (this._trigger.data('overlay')) {
                 this._overlay[action + 'Class'](overlayCls);
@@ -949,10 +1315,12 @@
             var defaults = simpla.helpers.createMap(),
                 trigger, container, overlay, close;
 
+            defaults.shouldPreventDefault = true;
             defaults.callback = $.noop;
 
             if (simpla.helpers.getClass(options) === 'Object') {
-                simpla.helpers.extend(options, this._defaults);
+                // simpla.helpers.extend(options, this._defaults);
+                $.extend(this._defaults, options);
             }
             Object.defineProperty(this, '_defaults', {
                 get: function () {
@@ -996,7 +1364,8 @@
         Object.defineProperty(simpla.UI.Bundle.prototype, 'init', {
             value: function () {
                 init.call(this);
-            }
+            },
+            enumerable: false
         });
 
         simpla.UI.Bundle.hideOutside = function () {
@@ -1018,7 +1387,7 @@
                 }
             }
             
-            $('body').on('touchstart click', hide);
+            body.on('touchstart click', hide);
         };
         simpla.UI.Bundle.hideOutside = simpla.decorators.once(simpla.UI.Bundle.hideOutside, null);
     }());
@@ -1035,13 +1404,15 @@
                     reg = new RegExp('(' + text + ')', 'gi');
                     
                 boxes.each(function () {
-                    $(this).html($(this).html().replace(/<\/?\w[1-6]?\w*\s*.*?>/g, ''));
+                    var that = $(this);
+                    
+                    that.html(that.html().replace(/<\/?\w[1-6]?\w*\s*.*?>/g, ''));
 
-                    if ($(this).text().search(reg) !== -1) {
-                        $(this).html($(this).html().replace(reg, '<span class="s-match">$1</span>'));
-                        $(this).removeClass('s-match--visible').addClass('s-match--invisible');
+                    if (that.text().search(reg) !== -1) {
+                        that.html(that.html().replace(reg, '<span class="s-match">$1</span>'));
+                        that.removeClass('s-match--visible').addClass('s-match--invisible');
                     } else {
-                        $(this).addClass('s-match--invisible').removeClass('s-match--visible');
+                        that.addClass('s-match--invisible').removeClass('s-match--visible');
                     }
                 });
 
@@ -1054,6 +1425,7 @@
         simpla.UI.Search = function (field, parent, options) {
             var defaults = simpla.helpers.createMap();
 
+            defaults.shouldPreventDefault = true;
             defaults.invokeCallback = false;
             defaults.callback = $.noop;
 
@@ -1071,7 +1443,8 @@
             });
 
             if (simpla.helpers.getClass(options) === 'Object') {
-                simpla.helpers.extend(options, defaults);
+                // simpla.helpers.extend(options, defaults);
+                $.extend(defaults, options);
             }
             Object.defineProperty(this, '_defaults', {
                 get: function () {
@@ -1085,7 +1458,8 @@
         Object.defineProperty(simpla.UI.Search.prototype, 'init', {
             value: function () {
                 init.call(this);
-            }
+            },
+            enumerable: false
         });
     }());
     // Search (END)

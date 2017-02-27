@@ -58,6 +58,10 @@
     text-align: left;
 }
 
+.text-ultralarge {
+    font-size: get-font-size("ultraLarge");
+}
+
 .bold {
     font-weight: bold;
 }
@@ -105,7 +109,11 @@
 .description {
     margin-bottom: 32px;
     line-height: 1.43;
-    font-size: get-font-size("small");
+    font-size: get-font-size("base");
+    h3 {
+        margin: 18px 0 8px;
+        font-weight: bold;
+    }
     p {
         margin: 12px 0;
         line-height: 1.43;

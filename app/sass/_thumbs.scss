@@ -1,0 +1,28 @@
+.thumbs {
+    &__item {
+        margin-bottom: 30px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.thumb {
+    &__inner {
+        text-align: center;
+
+    }
+    &__preview {
+        margin: 0 auto;
+        // width: 258px;
+        height: 258px;
+        line-height: 258px;
+        background-color: get-color("white");
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+        iframe {
+            width: 100%;
+            max-width: none;
+            height: 100%;
+        }
+    }
+}

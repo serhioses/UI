@@ -5,6 +5,7 @@ import Main from 'Main';
 import Home from 'Home';
 import Dropdown from 'Dropdown';
 import Tabs from 'Tabs';
+import Spinner from 'Spinner';
 import Form from 'Form';
 
 ReactDOM.render(
@@ -14,7 +15,12 @@ ReactDOM.render(
             <Route path="dropdown" component={Form}>
                 <IndexRoute component={Dropdown}/>
             </Route>
-            <Route path="tabs" component={Tabs}/>
+            <Route path="tabs" component={Form}>
+                <IndexRoute component={Tabs}/>
+            </Route>
+            <Route path="spinner" component={Form}>
+                <IndexRoute component={Spinner}/>
+            </Route>
         </Route>
     </Router>,
     document.getElementById('app')

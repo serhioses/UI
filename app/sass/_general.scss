@@ -9,6 +9,7 @@ html {
 }
 
 body {
+    overflow-y: scroll;
     color: get-color("black");
     font-family: unquote(get-font("main"));
     font-size: 100%;
@@ -44,13 +45,13 @@ form {
     display: inline;
 }
 
-img {
+img, iframe {
     max-width: 100%;
     height: auto;
     max-height: 100%;
 }
 
-select {
+select, iframe {
     max-width: 100%;
 }
 
@@ -93,23 +94,11 @@ select {
     font-size: get-font-size("big");
 }
 
-.spinner {
-    
-    &__field {
-        
-    }
-    &__control {
-        
-        &--plus {
-            
-        }
-        &--minus {
-            
-        }
-    }
-}
-
 .message {
     
+}
+
+.example {
+    margin-bottom: 60px;
 }
 // General (END)
