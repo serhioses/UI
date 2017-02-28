@@ -14,6 +14,9 @@ export default class Form extends React.Component {
             }
         };
     }
+    componentWillMount() {
+        $('body').removeClass('main');
+    }
     componentDidMount() {
         var form = document.getElementById('form');
 

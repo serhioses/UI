@@ -21,12 +21,6 @@ export default class Bundle extends UI {
             bundle.init();
         });
     }
-    // componentDidUpdate(prevProps, prevState) {
-    //     this.handleUIUpdate('spinner', 'spinners', this.indexes);
-    // }
-    // componentWillUpdate(nextProps, nextState) {
-    //     this.indexes = nextProps.update.spinner.indexes;
-    // }
     render() {
         return (
             <div className="content">
@@ -44,9 +38,7 @@ export default class Bundle extends UI {
                     <h2 className="title title--small">В действии</h2>
                     <h3 className="subtitle">Пример</h3>
                     <div className="example">
-                        <div className="text-center">
-                            <button className="search-trigger button button--default button--blue" data-container="search" data-body="true" data-bundle-outside="true" data-bundle-id="search" data-bundle-action="toggle" data-bundle>Показать поиск</button>
-                        </div>
+                        <button className="search-trigger button button--default button--blue" data-container="search" data-body="true" data-bundle-outside="true" data-bundle-id="search" data-bundle-action="toggle" data-bundle>Показать поиск</button>
                     </div>
                     <div className="search" data-bundle-outside="true">
                         <div className="search__inner">

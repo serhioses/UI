@@ -11,7 +11,7 @@ export default class Nav extends React.Component {
         var nav = new simpla.UI.Bundle('nav-trigger', '');
         nav.init();
 
-        $('.nav__link:not(.nav__link--active)').click(function () {
+        $('body').on('click', '.nav__link:not(.nav__link--active)', function () {
             $('.bundle-overlay--visible').trigger('click');
         });
     }

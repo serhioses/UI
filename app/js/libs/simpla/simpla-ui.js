@@ -174,7 +174,6 @@
             this._dropdowns.length = 0;
             
             if (simpla.helpers.getClass(newOptions) === 'Object') {
-                // simpla.helpers.extend(newOptions, this._defaults);
                 $.extend(this._defaults, newOptions);
             }
             createDropdownsArray.call(this, this._rootDD);
@@ -813,7 +812,6 @@
             });
 
             if (simpla.helpers.getClass(options) === 'Object') {
-                // simpla.helpers.extend(options, defaults);
                 $.extend(defaults, options);
             }
 
@@ -1001,7 +999,6 @@
                 });
 
                 if (simpla.helpers.getClass(options) === 'Object') {
-                    // simpla.helpers.extend(options, defaults);
                     $.extend(defaults, options);
                 }
 
@@ -1055,7 +1052,6 @@
                 tabs._mobileTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active t-tab-nav-item--active_mobile');
 
                 if (!tabs._defaults.toggleTabsMobile) {
-                    // tabs._mobileTabNav.filter('[data-tab="' + id + '"]').addClass('t-tab-nav-item--active t-tab-nav-item--active_mobile');
                     tabs._tabContent.filter('[data-tab="' + id + '"]').addClass('t-tab-item--active_mobile');
                 }
                 tabs._mobileTabNav.filter('[data-tab="' + id + '"]')[mobileClassAction]('t-tab-nav-item--active t-tab-nav-item--active_mobile');
@@ -1105,7 +1101,6 @@
                 tabs._mobileTabNav.removeClass('t-tab-nav-item--active_mobile');
 
                 if (!tabs._defaults.toggleTabsDesktop) {
-                    // tabs._desktopTabNav.filter('[data-tab="' + id + '"]').addClass('t-tab-nav-item--active t-tab-nav-item--active_desktop');
                     tabs._tabContent.filter('[data-tab="' + id + '"]').addClass('t-tab-item--active_desktop');
                 }
                 tabs._desktopTabNav.filter('[data-tab="' + id + '"]')[desktopClassAction]('t-tab-nav-item--active t-tab-nav-item--active_desktop');
@@ -1453,32 +1448,9 @@
 
             return search;
         }
+        
         function init () {
             simpla.storage.searches.push(this);
-            // var self = this,
-            //     boxes = self._parent.find('[data-q="true"]');
-
-            // self._field.on('input', function () {
-            //     var text = $(this).val(),
-            //         reg = new RegExp('(' + text + ')', 'gi');
-                    
-            //     boxes.each(function () {
-            //         var that = $(this);
-                    
-            //         that.html(that.html().replace(/<\/?\w[1-6]?\w*\s*.*?>/g, ''));
-
-            //         if (that.text().search(reg) !== -1) {
-            //             that.html(that.html().replace(reg, '<span class="s-match">$1</span>'));
-            //             that.removeClass('s-match--visible').addClass('s-match--invisible');
-            //         } else {
-            //             that.addClass('s-match--invisible').removeClass('s-match--visible');
-            //         }
-            //     });
-
-            //     if (self._defaults.invokeCallback) {
-            //         self._defaults.callback();
-            //     }
-            // });
         }
 
         // Delegation

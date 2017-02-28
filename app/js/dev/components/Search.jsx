@@ -19,6 +19,7 @@ export default class Search extends UI {
         var searches = [],
             dd;
 
+        simpla.UI.Dropdown.hideOutside();
         dd = new simpla.UI.Dropdown('search-dropdown', {
             trigger: 'dd-trigger'
         });
@@ -64,15 +65,19 @@ export default class Search extends UI {
                     <h2 className="title title--small">В действии</h2>
                     <h3 className="subtitle">Пример</h3>
                     <div className="example">
-                        <div id="search-dropdown" data-outside="true" data-other-dropdowns="true" data-dropdown data-search>
-                            <div className="select dd-dropdown" data-level="1">
-                                <div className="select__value dd-trigger">
-                                    Сортировка
-                                </div>
-                                <div className="select__drop dd-drop">
-                                    <input className="select__search form-field s-field" type="text" placeholder="Поиск" />
-                                    <div className="select__items">
-                                        {regions}
+                        <div className="row">
+                            <div className="col-sm-6">
+                                <div id="search-dropdown" data-outside="true" data-other-dropdowns="true" data-dropdown data-search>
+                                    <div className="select dd-dropdown" data-level="1">
+                                        <div className="select__value dd-trigger">
+                                            Области
+                                        </div>
+                                        <div className="select__drop dd-drop">
+                                            <input className="select__search form-field s-field" type="text" placeholder="Поиск" />
+                                            <div className="select__items">
+                                                {regions}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -11,6 +11,24 @@
 }
 
 @media (min-width: 768px) {
+    .header {
+        &--fixed {
+            top: -70px;
+            &_visible {
+                top: 0;
+            }
+        }
+    }
+    .main {
+        &__inner {
+            padding-top: 64px;
+        }
+    }
+    .presentation {
+        span {
+            font-size: 100px;
+        }
+    }
     .nav-trigger {
         display: none;
     }
