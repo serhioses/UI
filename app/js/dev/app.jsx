@@ -6,6 +6,8 @@ import Home from 'Home';
 import Dropdown from 'Dropdown';
 import Tabs from 'Tabs';
 import Spinner from 'Spinner';
+import Bundle from 'Bundle';
+import Search from 'Search';
 import Form from 'Form';
 
 ReactDOM.render(
@@ -20,6 +22,12 @@ ReactDOM.render(
             </Route>
             <Route path="spinner" component={Form}>
                 <IndexRoute component={Spinner}/>
+            </Route>
+            <Route path="bundle" component={Form}>
+                <IndexRoute component={Bundle}/>
+            </Route>
+            <Route path="search" component={Form}>
+                <IndexRoute component={Search}/>
             </Route>
         </Route>
     </Router>,

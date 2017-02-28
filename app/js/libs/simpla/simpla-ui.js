@@ -191,6 +191,7 @@
                 dropdownContainer = target.closest('[data-dropdown]'),
                 dropdown, i,
                 current, effectObj, pos,
+                request,
                 launch;
 
             if (!dropdownContainer.length) {
@@ -252,18 +253,24 @@
             effectObj = getEffect.call(dropdown);
 
             if (typeof dropdown._defaults.wait === 'function') {
-                pos = simpla.storage.dropdowns.indexOf(dropdown);
+                request = dropdown._defaults.wait(current);
 
-                if (pos !== -1) {
-                    simpla.storage.dropdowns.splice(pos, 1);
-                }
-                dropdown._dropdowns.length = 0;
+                if (request.then) {
+                    pos = simpla.storage.dropdowns.indexOf(dropdown);
 
-                $.when(dropdown._defaults.wait(current)).then(function (a, b) {
-                    createDropdownsArray.call(dropdown, dropdown._rootDD);
-                    simpla.storage.dropdowns.push(dropdown);
+                    if (pos !== -1) {
+                        simpla.storage.dropdowns.splice(pos, 1);
+                    }
+                    dropdown._dropdowns.length = 0;
+
+                    $.when(request).then(function (a, b) {
+                        createDropdownsArray.call(dropdown, dropdown._rootDD);
+                        simpla.storage.dropdowns.push(dropdown);
+                        launch();
+                    });
+                } else {
                     launch();
-                });
+                }
             } else {
                 launch();
             }
@@ -885,7 +892,7 @@
                 that[classAction]('t-tab-nav-item--active');
                 
                 tabs._tabContent.filter('[data-tab="' + id + '"]')
-                    .stop(true, true)[effect](tabs._defaults.speed, function () {
+                    .stop(true, true)[effect](parseInt(tabs._defaults.speed, 10) || 0, function () {
                         $(this)[classAction]('t-tab-item--active').removeAttr('style');
 
                         tabs._isAnimationFinished = true;
@@ -1060,7 +1067,7 @@
                     .removeClass('t-tab-item--active_mobile t-tab-item--active_desktop');
 
                 tabs._tabContent.filter('[data-tab="' + id + '"]')
-                    .stop(true, true)[effect](tabs._defaults.desktopSpeed, function () {
+                    .stop(true, true)[effect](parseInt(tabs._defaults.desktopSpeed, 10) || 0, function () {
                         $(this)[desktopClassAction]('t-tab-item--active t-tab-item--active_desktop').removeAttr('style');
 
                         tabs._isAnimationFinished = true;
@@ -1110,7 +1117,7 @@
                     .removeClass('t-tab-item--active_desktop t-tab-item--active_mobile');
 
                 tabs._tabContent.filter('[data-tab="' + id + '"]')
-                    .stop(true, true)[effect](tabs._defaults.mobileSpeed, function () {
+                    .stop(true, true)[effect](parseInt(tabs._defaults.mobileSpeed, 10) || 0, function () {
                         $(this)[mobileClassAction]('t-tab-item--active').removeAttr('style');
 
                         tabs._isAnimationFinished = true;
@@ -1268,12 +1275,31 @@
             overlayCls = 'bundle-overlay--visible',
             bodyCls = 'body--hidden';
 
+        function findBundle (e) {
+            var target = $(e.target),
+                bundleEl = target.closest('[data-bundle]'),
+                bundle, i;
+
+            if (!bundleEl.length) {
+                return false;
+            }
+
+            for (i = 0; i < simpla.storage.bundles.length; i += 1) {
+                if (simpla.storage.bundles[i]._id === bundleEl.data('bundle-id')) {
+                    bundle = simpla.storage.bundles[i];
+                    break;
+                }
+            }
+
+            return bundle;
+        }
+
         function switchBundle (options, action) {
             this._trigger[action + 'Class'](triggerCls);
             this._container[action + 'Class'](containerCls);
 
             if (this._trigger.data('body')) {
-                body[action + 'Class'](bodyCls);
+                $('html')[action + 'Class']('html--hidden');
             }
             if (this._trigger.data('overlay')) {
                 this._overlay[action + 'Class'](overlayCls);
@@ -1292,36 +1318,45 @@
         }
 
         function init () {
-            var self = this;
-
-            self._trigger.on('click', function () {
-                hideOnOtherBundleClick.call(self, self._trigger, self._close, self._container, self._overlay);
-
-                switchBundle.call(self, self._defaults, 'toggle');
-            });
-            if (self._overlay) {
-                self._overlay.on('click', function () {
-                    switchBundle.call(self, self._defaults, 'remove');
-                });
-            }
-            if (self._close) {
-                self._close.on('click', function () {
-                    switchBundle.call(self, self._defaults, 'remove');
-                });
-            }
+            simpla.storage.bundles.push(this);  
         }
+
+        // Delegation
+        body.on('click', function (e) {
+            var bundle = findBundle(e),
+                target, action;
+
+            if (!bundle) {
+                return;
+            }
+
+            target = $(e.target).closest('[data-bundle]');
+            action = target.data('bundle-action');
+
+            if (!action) {
+                return;
+            }
+
+            if (bundle._defaults.shouldPreventDefault) {
+                e.preventDefault();
+            }
+
+            switchBundle.call(bundle, bundle._defaults, action === 'toggle' ? 'toggle' : 'remove');
+        });
+        // Delegation (END)
 
         simpla.UI.Bundle = function (trigger, close, options) {
             var defaults = simpla.helpers.createMap(),
-                trigger, container, overlay, close;
+                trigger, container, overlay, close,
+                id;
 
             defaults.shouldPreventDefault = true;
             defaults.callback = $.noop;
 
             if (simpla.helpers.getClass(options) === 'Object') {
-                // simpla.helpers.extend(options, this._defaults);
                 $.extend(this._defaults, options);
             }
+
             Object.defineProperty(this, '_defaults', {
                 get: function () {
                     return defaults;
@@ -1332,6 +1367,8 @@
             container = $('.' + trigger.data('container'));
             overlay = trigger.data('overlay') ? $('.' +  trigger.data('overlay')) : null;
             close = close ? $('.' + close) : null;
+
+            id = trigger.first().data('bundle-id');
 
             Object.defineProperties(this, {
                 _trigger: {
@@ -1353,10 +1390,13 @@
                     get: function () {
                         return close;
                     }
+                },
+                _id: {
+                    get: function () {
+                        return id;
+                    }
                 }
             });
-
-            simpla.storage.bundles.push(this);   
 
             return this;
         };
@@ -1395,55 +1435,113 @@
 
     // Search
     (function () {
-        function init () {
-            var self = this,
-                boxes = self._parent.find('[data-q="true"]');
+        function findSearch (e) {
+            var target = $(e.target),
+                searchContainer = target.closest('[data-search]'),
+                search, i;
 
-            self._field.on('input', function () {
-                var text = $(this).val(),
-                    reg = new RegExp('(' + text + ')', 'gi');
-                    
-                boxes.each(function () {
-                    var that = $(this);
-                    
-                    that.html(that.html().replace(/<\/?\w[1-6]?\w*\s*.*?>/g, ''));
+            if (!searchContainer.length) {
+                return false;
+            }
 
-                    if (that.text().search(reg) !== -1) {
-                        that.html(that.html().replace(reg, '<span class="s-match">$1</span>'));
-                        that.removeClass('s-match--visible').addClass('s-match--invisible');
-                    } else {
-                        that.addClass('s-match--invisible').removeClass('s-match--visible');
-                    }
-                });
-
-                if (self._defaults.invokeCallback) {
-                    self._defaults.callback();
+            for (i = 0; i < simpla.storage.searches.length; i += 1) {
+                if (simpla.storage.searches[i]._container[0] === searchContainer[0]) {
+                    search = simpla.storage.searches[i];
+                    break;
                 }
-            });
+            }
+
+            return search;
+        }
+        function init () {
+            simpla.storage.searches.push(this);
+            // var self = this,
+            //     boxes = self._parent.find('[data-q="true"]');
+
+            // self._field.on('input', function () {
+            //     var text = $(this).val(),
+            //         reg = new RegExp('(' + text + ')', 'gi');
+                    
+            //     boxes.each(function () {
+            //         var that = $(this);
+                    
+            //         that.html(that.html().replace(/<\/?\w[1-6]?\w*\s*.*?>/g, ''));
+
+            //         if (that.text().search(reg) !== -1) {
+            //             that.html(that.html().replace(reg, '<span class="s-match">$1</span>'));
+            //             that.removeClass('s-match--visible').addClass('s-match--invisible');
+            //         } else {
+            //             that.addClass('s-match--invisible').removeClass('s-match--visible');
+            //         }
+            //     });
+
+            //     if (self._defaults.invokeCallback) {
+            //         self._defaults.callback();
+            //     }
+            // });
         }
 
-        simpla.UI.Search = function (field, parent, options) {
-            var defaults = simpla.helpers.createMap();
+        // Delegation
+        body.on('input', function (e) {
+            var search = findSearch(e),
+                reg;
+
+            if (!search) {
+                return;
+            }
+
+            reg = new RegExp('(' + search._field.val() + ')', 'gi');
+
+            search._boxes.each(function () {
+                var that = $(this);
+                
+                that.html(that.html().replace(/<\/?\w[1-6]?\w*\s*.*?>/g, ''));
+
+                if (that.text().search(reg) !== -1) {
+                    that.html(that.html().replace(reg, '<span class="s-match">$1</span>'));
+                    that.addClass('s-match--visible').removeClass('s-match--invisible');
+                } else {
+                    that.addClass('s-match--invisible').removeClass('s-match--visible');
+                }
+            });
+
+            if (search._defaults.invokeCallback) {
+                search._defaults.callback();
+            }
+        });
+        // Delegation (END)
+
+        simpla.UI.Search = function (container, options) {
+            var defaults = simpla.helpers.createMap(),
+                container, field, boxes;
 
             defaults.shouldPreventDefault = true;
             defaults.invokeCallback = false;
             defaults.callback = $.noop;
 
+            container = $('#' + container);
+            field = container.find('.s-field');
+            boxes = container.find('[data-q="true"]');
+
             Object.defineProperties(this, {
+                _container: {
+                    get: function () {
+                        return container;
+                    }
+                },
                 _field: {
                     get: function () {
                         return field;
                     }
                 },
-                _parent: {
+                _boxes: {
                     get: function () {
-                        return parent;
+                        return boxes;
                     }
                 }
             });
 
             if (simpla.helpers.getClass(options) === 'Object') {
-                // simpla.helpers.extend(options, defaults);
                 $.extend(defaults, options);
             }
             Object.defineProperty(this, '_defaults', {

@@ -1,0 +1,40 @@
+.search {
+    width: 100%;
+    height: 100%;
+    background-color: get-color("blue");
+    color: get-color("white");
+    opacity: 0;
+    position: fixed;
+    top: 100%;
+    left: 0;
+    @extend %transition;
+    &.bundle-container--active {
+        opacity: 1;
+        top: 0;
+    }
+    &__inner {
+        padding: 24px;
+    }
+    &__field {
+        margin-top: 24px;
+        height: 48px;
+        background: transparent;
+        color: get-color("white");
+        &:focus {
+            border-bottom-color: get-color("white");
+        }
+    }
+    &__close {
+        width: 48px;
+        height: 48px;
+        position: absolute;
+        top: 0;
+        right: 7px;
+    }
+    ::placeholder {
+        color: rgba(255,255,255,0.54);
+    }
+    :placeholder-shown {
+        color:rgba(255,255,255,0.54);
+    }
+}

@@ -32,6 +32,7 @@
     simpla.storage.spinners = [];
     simpla.storage.staticTabs = [];
     simpla.storage.adaptiveTabs = [];
+    simpla.storage.searches = [];
     simpla.storage.cache = {};
     // Storages (END)
 

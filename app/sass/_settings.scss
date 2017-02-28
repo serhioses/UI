@@ -48,3 +48,34 @@ input:checked {
         transform: rotateZ(45deg);
     }
 }
+
+.radio {
+    margin-bottom: 12px;
+    padding-left: 32px;
+    line-height: 24px;
+    font-size: get-font-size("small");
+    position: relative;
+    &:before, &:after {
+        content: "";
+        border-radius: 100%;
+        position: absolute;
+        top: 50%;
+    }
+    &:before {
+        margin-top: -8px;
+        border: 1px solid get-color("blue");
+        width: 16px;
+        height: 16px;
+        background-color: get-color("white");
+        left: 0;
+    }
+}
+input:checked {
+    & + .radio:after {
+        margin-top: -5px;
+        width: 10px;
+        height: 10px;
+        background-color: get-color("blue");
+        left: 3px;
+    }
+}

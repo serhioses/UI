@@ -38,6 +38,9 @@ module.exports = {
             Dropdown: jsFolder + '/components/Dropdown.jsx',
             Tabs: jsFolder + '/components/Tabs.jsx',
             Spinner: jsFolder + '/components/Spinner.jsx',
+            Bundle: jsFolder + '/components/Bundle.jsx',
+            Search: jsFolder + '/components/Search.jsx',
+            regions: jsFolder + '/api/get-regions.jsx',
             Footer: jsFolder + '/components/Footer.jsx'
         }
     },

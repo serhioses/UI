@@ -1,0 +1,7 @@
+.s-match {
+    color: get-color("blue");
+    font-weight: bold;
+    &--invisible {
+        display: none;
+    }
+}
