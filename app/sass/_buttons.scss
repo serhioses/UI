@@ -10,16 +10,19 @@
     overflow: hidden;
     background: none;
     line-height: normal;
-    // font-family: get-font("main"), Arial, sans-serif;
+    font-family: get-font("main"), Arial, sans-serif;
     font-size: get-font-size("small");
-    // font-weight: bold;
     text-align: center;
     text-transform: uppercase;
-    // position: relative;
+    position: relative;
     cursor: pointer;
     @extend %transition;
     -webkit-appearance: none;
     -moz-appearance: none;
+    &__text {
+        position: relative;
+        z-index: 3;
+    }
     &:focus, &:active {
         opacity: 0.8;
     }

@@ -10,9 +10,9 @@
         height: 80px;
     }
     &__control {
-        // border: 1px solid #444;
         width: 40px;
         height: 40px;
+        overflow: hidden;
         background: get-color("lightGray");
         color: get-color("white");
         font-size: 24px;

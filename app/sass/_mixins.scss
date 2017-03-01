@@ -68,7 +68,6 @@
                     display: inline-block;
                     vertical-align: top;
                     width: to-fixed(percentage(1 / $cols * $i), 4);
-                    // float: left;
                 }
             }
         }

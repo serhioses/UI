@@ -38,7 +38,9 @@ export default class Bundle extends UI {
                     <h2 className="title title--small">В действии</h2>
                     <h3 className="subtitle">Пример</h3>
                     <div className="example">
-                        <button className="search-trigger button button--default button--blue" data-container="search" data-body="true" data-bundle-outside="true" data-bundle-id="search" data-bundle-action="toggle" data-bundle>Показать поиск</button>
+                        <button className="search-trigger button button--default button--blue js-ripple-button" data-container="search" data-body="true" data-bundle-outside="true" data-bundle-id="search" data-bundle-action="toggle" data-bundle data-color-action="lighten" data-percent="30">
+                            <span className="button__text">Показать поиск</span>
+                        </button>
                     </div>
                     <div className="search" data-bundle-outside="true">
                         <div className="search__inner">

@@ -71,8 +71,8 @@ export default class Spinner extends UI {
                             <div className="example">
                                 <div id="spinner" className="spinner" data-spinner>
                                     <input className="spinner__field form-field text-ultralarge sp-field" type="text" defaultValue="1" data-min="-1" data-max="30" data-step="1" data-precision="0" data-initial="0" />
-                                    <button className="spinner__control spinner__control--plus sp-control sp-control--plus">+</button>
-                                    <button className="spinner__control spinner__control--minus sp-control sp-control--minus">—</button>
+                                    <button className="spinner__control spinner__control--plus sp-control sp-control--plus js-ripple-button" data-color-action="darken" data-percent="30">+</button>
+                                    <button className="spinner__control spinner__control--minus sp-control sp-control--minus js-ripple-button" data-color-action="darken" data-percent="30">—</button>
                                 </div>
                             </div>
                         </div>
