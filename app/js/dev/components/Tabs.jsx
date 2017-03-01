@@ -83,12 +83,12 @@ export default class Tabs extends UI {
                                 <div className="table">
                                     <div className="table-row">
                                         <div className="cell cell--top">
-                                            <input id="before-animation" className="none" type="checkbox" value="Before animation" data-ui="tabs" data-property="beforeAnimation" data-property-type="function" data-indexes="0" />
-                                            <label className="checkbox" htmlFor="before-animation">Before animation</label>
+                                            <input id="before-animation" className="none" type="checkbox" value="Перед анимацией" data-ui="tabs" data-property="beforeAnimation" data-property-type="function" data-indexes="0" />
+                                            <label className="checkbox" htmlFor="before-animation">Перед анимацией</label>
                                         </div>
                                         <div className="cell cell--top">
-                                            <input id="after-animation" className="none" type="checkbox" value="After animation" data-ui="tabs" data-property="afterAnimation" data-property-type="function" data-indexes="0" />
-                                            <label className="checkbox" htmlFor="after-animation">After animation</label>
+                                            <input id="after-animation" className="none" type="checkbox" value="После анимации" data-ui="tabs" data-property="afterAnimation" data-property-type="function" data-indexes="0" />
+                                            <label className="checkbox" htmlFor="after-animation">После анимации</label>
                                         </div>
                                     </div>
                                 </div>
