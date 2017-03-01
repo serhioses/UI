@@ -74,22 +74,22 @@ export default class Dropdown extends UI {
                                 <div className="table">
                                     <div className="table-row">
                                         <div className="cell cell--top">
-                                            <input id="before-open" className="none" type="checkbox" value="Before open" data-ui="dropdown" data-property="beforeOpen" data-property-type="function" data-indexes="0" />
-                                            <label className="checkbox" htmlFor="before-open">Before open</label>
+                                            <input id="before-open" className="none" type="checkbox" value="Перед открытием" data-ui="dropdown" data-property="beforeOpen" data-property-type="function" data-indexes="0" />
+                                            <label className="checkbox" htmlFor="before-open">Перед открытием</label>
                                         </div>
                                         <div className="cell cell--top">
-                                            <input id="after-open" className="none" type="checkbox" value="After open" data-ui="dropdown" data-property="afterOpen" data-property-type="function" data-indexes="0" />
-                                            <label className="checkbox" htmlFor="after-open">After open</label>
+                                            <input id="after-open" className="none" type="checkbox" value="После открытия" data-ui="dropdown" data-property="afterOpen" data-property-type="function" data-indexes="0" />
+                                            <label className="checkbox" htmlFor="after-open">После открытия</label>
                                         </div>
                                     </div>
                                     <div className="table-row">
                                         <div className="cell cell--top">
-                                            <input id="before-close" className="none" type="checkbox" value="Before close" data-ui="dropdown" data-property="beforeClose" data-property-type="function" data-indexes="0" />
-                                            <label className="checkbox" htmlFor="before-close">Before close</label>
+                                            <input id="before-close" className="none" type="checkbox" value="Перед закрытием" data-ui="dropdown" data-property="beforeClose" data-property-type="function" data-indexes="0" />
+                                            <label className="checkbox" htmlFor="before-close">Перед закрытием</label>
                                         </div>
                                         <div className="cell cell--top">
-                                            <input id="after-close" className="none" type="checkbox" value="After close" data-ui="dropdown" data-property="afterClose" data-property-type="function" data-indexes="0" />
-                                            <label className="checkbox" htmlFor="after-close">After close</label>
+                                            <input id="after-close" className="none" type="checkbox" value="После закрытия" data-ui="dropdown" data-property="afterClose" data-property-type="function" data-indexes="0" />
+                                            <label className="checkbox" htmlFor="after-close">После закрытия</label>
                                         </div>
                                     </div>
                                 </div>
@@ -288,7 +288,7 @@ export default class Dropdown extends UI {
                                 <input id="effect-3" className="none" type="radio" name="effect" value="slide" data-ui="dropdown" data-property="effect" data-property-type="any" data-indexes="1,2" />
                                 <label className="radio" htmlFor="effect-3">Слайд</label>
                                 <label className="settings__title settings__title--location_inside" htmlFor="animation-duration-2">Время анимации</label>
-                                <input id="animation-duration-2" className="form-field" type="number" min="0" placeholder="Enter miliseconds" data-ui="dropdown" data-property="animationDuration" data-property-type="any" data-indexes="1,2" />
+                                <input id="animation-duration-2" className="form-field" type="number" min="0" placeholder="Введите милисекунды" data-ui="dropdown" data-property="animationDuration" data-property-type="any" data-indexes="1,2" />
                             </div>
                         </div>
                         <div className="col-md-6 left">

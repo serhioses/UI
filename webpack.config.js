@@ -33,6 +33,7 @@ module.exports = {
             Main: jsFolder + '/components/Main.jsx',
             Nav: jsFolder + '/components/Nav.jsx',
             Home: jsFolder + '/components/Home.jsx',
+            About: jsFolder + '/components/About.jsx',
             Form: jsFolder + '/components/Form.jsx',
             UI: jsFolder + '/components/UI.jsx',
             Dropdown: jsFolder + '/components/Dropdown.jsx',

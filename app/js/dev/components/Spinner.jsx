@@ -49,7 +49,7 @@ export default class Spinner extends UI {
                             <li>возможность задания шага.</li>
                         </ul>
                     </div>
-                    <h2 className="title title--small">Все возможности</h2>
+                    <h2 className="title title--small">В действии</h2>
                     <div className="row clearfix">
                         <div className="col-md-6 right">
                             <h3 className="subtitle">Настройки</h3>

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {Router, Route, IndexRoute, hashHistory} from 'react-router';
 import Main from 'Main';
 import Home from 'Home';
+import About from 'About';
 import Dropdown from 'Dropdown';
 import Tabs from 'Tabs';
 import Spinner from 'Spinner';
@@ -29,6 +30,7 @@ ReactDOM.render(
             <Route path="search" component={Form}>
                 <IndexRoute component={Search}/>
             </Route>
+            <Route path="about" component={About}/>
         </Route>
     </Router>,
     document.getElementById('app')

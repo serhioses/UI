@@ -32,6 +32,7 @@ export default class Nav extends React.Component {
                         <Link className="nav__link" activeClassName="nav__link--active" to="/spinner">Spinner</Link>
                         <Link className="nav__link" activeClassName="nav__link--active" to="/bundle">Bundle</Link>
                         <Link className="nav__link" activeClassName="nav__link--active" to="/search">Search</Link>
+                        <Link className="nav__link" activeClassName="nav__link--active" to="/about">About</Link>
                     </nav>
                     <div className="overlay" data-bundle-outside="true" data-bundle-id="nav" data-bundle-action="close" data-bundle></div>
                 </div>
