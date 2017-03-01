@@ -4,6 +4,9 @@ export default class About extends React.Component {
     constructor(props) {
         super(props);
     }
+    componentWillMount() {
+        $('body').removeClass('main');
+    }
     render() {
         return (
             <div className="content">
