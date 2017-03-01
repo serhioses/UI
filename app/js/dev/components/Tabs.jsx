@@ -14,7 +14,12 @@ export default class Tabs extends UI {
         var tabs = [];
 
         tabs.push(new simpla.UI.AdaptiveTabs('tabs', {
-            
+            hideAjacentTabsMobile: true,
+            hideAjacentTabsDesktop: true,
+            toggleTabsDesktop: false,
+            toggleTabsMobile: true,
+            bindDesktopToMobile: true,
+            bindMobileToDesktop: true
         }));
 
         this.tabs = tabs;
@@ -58,8 +63,6 @@ export default class Tabs extends UI {
                                 <label className="checkbox" htmlFor="scroll-to-active-desktop">Прокрутка до активной (ПК)</label>
                                 <label className="settings__title settings__title--location_inside" htmlFor="animation-duration-1">Время анимации (моб.)</label>
                                 <input id="animation-duration-1" className="form-field" type="number" min="0" placeholder="Введите милисекунды" data-ui="tabs" data-property="mobileSpeed" data-property-type="any" data-indexes="0" />
-                                <label className="settings__title settings__title--location_inside" htmlFor="animation-duration-2">Время анимации (ПК)</label>
-                                <input id="animation-duration-2" className="form-field" type="number" min="0" placeholder="Введите милисекунды" data-ui="tabs" data-property="desktopSpeed" data-property-type="any" data-indexes="0" />
                                 <h4 className="settings__title settings__title--location_inside">Эффект (моб.)</h4>
                                 <input id="effect-1" className="none" type="radio" name="effect-m" value="toggle" data-ui="tabs" data-property="mobileEffect" data-property-type="any" data-indexes="0" />
                                 <label className="radio" htmlFor="effect-1">Резко</label>
@@ -67,6 +70,8 @@ export default class Tabs extends UI {
                                 <label className="radio" htmlFor="effect-2">Затухание</label>
                                 <input id="effect-3" className="none" type="radio" name="effect-m" value="slide" defaultChecked={true} data-ui="tabs" data-property="mobileEffect" data-property-type="any" data-indexes="0" />
                                 <label className="radio" htmlFor="effect-3">Слайд</label>
+                                <label className="settings__title settings__title--location_inside" htmlFor="animation-duration-2">Время анимации (ПК)</label>
+                                <input id="animation-duration-2" className="form-field" type="number" min="0" placeholder="Введите милисекунды" data-ui="tabs" data-property="desktopSpeed" data-property-type="any" data-indexes="0" />
                                 <h4 className="settings__title settings__title--location_inside">Эффект (ПК)</h4>
                                 <input id="effect-4" className="none" type="radio" name="effect-d" value="toggle" defaultChecked={true} data-ui="tabs" data-property="desktopEffect" data-property-type="any" data-indexes="0" />
                                 <label className="radio" htmlFor="effect-4">Резко</label>

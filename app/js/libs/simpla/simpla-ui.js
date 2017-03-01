@@ -898,7 +898,7 @@
                         tabs._defaults.afterAnimation();
 
                         if (tabs._defaults.scrollToActive) {
-                            simpla.DOM.scrollBody(that, {}, tabs._defaults.scrollCorrection);
+                            simpla.DOM.scrollBody(that, tabs._defaults.scrollCorrection);
                         }
                     });
             }
@@ -1032,7 +1032,7 @@
                     effect = effects[tabs._defaults.desktopEffect] ? effects[tabs._defaults.desktopEffect] : 'toggle',
                     desktopClassAction, mobileClassAction;
 
-                if (!tabs._isAnimationFinished || (that.hasClass('t-tab-nav-item--active') && !tabs._defaults.toggleTabsDesktop)) {
+                if (!tabs._isAnimationFinished || (that.hasClass('t-tab-nav-item--active_desktop') && !tabs._defaults.toggleTabsDesktop)) {
                     return;
                 }
 
@@ -1043,24 +1043,18 @@
                 tabs._isAnimationFinished = false;
 
                 if (tabs._defaults.hideAjacentTabsDesktop) {
-                    tabs._desktopTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active');
-                    tabs._tabContent.not('[data-tab="' + id + '"]').removeClass('t-tab-item--active');
+                    tabs._desktopTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active t-tab-nav-item--active_desktop');
+                    tabs._tabContent.not('[data-tab="' + id + '"]').removeClass('t-tab-item--active t-tab-item--active_desktop');
                 }
 
-                tabs._desktopTabNav.removeClass('t-tab-nav-item--active_desktop');
-
-                tabs._mobileTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active t-tab-nav-item--active_mobile');
-
-                if (!tabs._defaults.toggleTabsMobile) {
+                if (tabs._defaults.bindMobileToDesktop) {
+                    tabs._mobileTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active t-tab-nav-item--active_mobile');
+                    tabs._tabContent.not('[data-tab="' + id + '"]').removeClass('t-tab-item--active_mobile');
+                    tabs._mobileTabNav.filter('[data-tab="' + id + '"]').addClass('t-tab-nav-item--active t-tab-nav-item--active_mobile');
                     tabs._tabContent.filter('[data-tab="' + id + '"]').addClass('t-tab-item--active_mobile');
                 }
-                tabs._mobileTabNav.filter('[data-tab="' + id + '"]')[mobileClassAction]('t-tab-nav-item--active t-tab-nav-item--active_mobile');
 
-                that[desktopClassAction]('t-tab-nav-item--active');
-
-                tabs._tabContent
-                    .not('[data-tab="' + id + '"]')
-                    .removeClass('t-tab-item--active_mobile t-tab-item--active_desktop');
+                that[desktopClassAction]('t-tab-nav-item--active t-tab-nav-item--active_desktop');
 
                 tabs._tabContent.filter('[data-tab="' + id + '"]')
                     .stop(true, true)[effect](parseInt(tabs._defaults.desktopSpeed, 10) || 0, function () {
@@ -1071,7 +1065,7 @@
                         tabs._defaults.afterAnimation();
 
                         if (tabs._defaults.scrollToActiveDesktop) {
-                            simpla.DOM.scrollBody(that, {}, tabs._defaults.scrollCorrectionDesktop);
+                            simpla.DOM.scrollBody(that, tabs._defaults.scrollCorrectionDesktop);
                         }
                     });
             }
@@ -1082,7 +1076,7 @@
                     effect = effects[tabs._defaults.mobileEffect] ? effects[tabs._defaults.mobileEffect] : 'toggle',
                     mobileClassAction, desktopClassAction;
 
-                if (!tabs._isAnimationFinished || (that.hasClass('t-tab-nav-item--active') && !tabs._defaults.toggleTabsMobile)) {
+                if (!tabs._isAnimationFinished || (that.hasClass('t-tab-nav-item--active_mobile') && !tabs._defaults.toggleTabsMobile)) {
                     return;
                 }
 
@@ -1093,34 +1087,29 @@
                 tabs._isAnimationFinished = false;
 
                 if (tabs._defaults.hideAjacentTabsMobile) {
-                    tabs._mobileTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active');
-                    tabs._tabContent.not('[data-tab="' + id + '"]').removeClass('t-tab-item--active');
+                    tabs._mobileTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active t-tab-nav-item--active_mobile');
+                    tabs._tabContent.not('[data-tab="' + id + '"]').removeClass('t-tab-item--active t-tab-item--active_mobile');
                 }
 
-                tabs._desktopTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active t-tab-nav-item--active_desktop');
-                tabs._mobileTabNav.removeClass('t-tab-nav-item--active_mobile');
-
-                if (!tabs._defaults.toggleTabsDesktop) {
+                if (tabs._defaults.bindDesktopToMobile) {
+                    tabs._desktopTabNav.not('[data-tab="' + id + '"]').removeClass('t-tab-nav-item--active t-tab-nav-item--active_desktop');
+                    tabs._tabContent.not('[data-tab="' + id + '"]').removeClass('t-tab-item--active_desktop');
+                    tabs._desktopTabNav.filter('[data-tab="' + id + '"]').addClass('t-tab-nav-item--active t-tab-nav-item--active_desktop');
                     tabs._tabContent.filter('[data-tab="' + id + '"]').addClass('t-tab-item--active_desktop');
                 }
-                tabs._desktopTabNav.filter('[data-tab="' + id + '"]')[desktopClassAction]('t-tab-nav-item--active t-tab-nav-item--active_desktop');
 
-                that[mobileClassAction]('t-tab-nav-item--active');
-
-                tabs._tabContent
-                    .not('[data-tab="' + id + '"]')
-                    .removeClass('t-tab-item--active_desktop t-tab-item--active_mobile');
+                that[mobileClassAction]('t-tab-nav-item--active t-tab-nav-item--active_mobile');
 
                 tabs._tabContent.filter('[data-tab="' + id + '"]')
                     .stop(true, true)[effect](parseInt(tabs._defaults.mobileSpeed, 10) || 0, function () {
-                        $(this)[mobileClassAction]('t-tab-item--active').removeAttr('style');
+                        $(this)[mobileClassAction]('t-tab-item--active t-tab-item--active_mobile').removeAttr('style');
 
                         tabs._isAnimationFinished = true;
 
                         tabs._defaults.afterAnimation();
 
                         if (tabs._defaults.scrollToActiveMobile) {
-                            simpla.DOM.scrollBody(that, {}, tabs._defaults.scrollCorrectionMobile);
+                            simpla.DOM.scrollBody(that, tabs._defaults.scrollCorrectionMobile);
                         }
                     });
             }
@@ -1193,6 +1182,8 @@
                 defaults.scrollCorrectionDesktop = 0;
                 defaults.toggleTabsDesktop = false;
                 defaults.toggleTabsMobile = true;
+                defaults.bindMobileToDesktop = true;
+                defaults.bindDesktopToMobile = true;
                 defaults.beforeAnimation = $.noop;
                 defaults.afterAnimation = $.noop;
 
@@ -1312,6 +1303,20 @@
             });
         }
 
+        function reinit (newOptions) {
+            var pos = simpla.storage.bundles.indexOf(this);
+
+            if (pos !== -1) {
+                simpla.storage.bundles.splice(pos, 1);
+            }
+
+            if (simpla.helpers.getClass(newOptions) === 'Object') {
+                $.extend(this._defaults, newOptions);
+            }
+
+            simpla.storage.bundles.push(this);
+        }
+
         function init () {
             simpla.storage.bundles.push(this);  
         }
@@ -1396,6 +1401,12 @@
             return this;
         };
 
+        Object.defineProperty(simpla.UI.Bundle.prototype, 'reinit', {
+            value: function (newOptions) {
+                reinit.call(this, newOptions);
+            },
+            enumerable: false
+        });
         Object.defineProperty(simpla.UI.Bundle.prototype, 'init', {
             value: function () {
                 init.call(this);
@@ -1447,6 +1458,20 @@
             }
 
             return search;
+        }
+
+        function reinit (newOptions) {
+            var pos = simpla.storage.searches.indexOf(this);
+
+            if (pos !== -1) {
+                simpla.storage.searches.splice(pos, 1);
+            }
+
+            if (simpla.helpers.getClass(newOptions) === 'Object') {
+                $.extend(this._defaults, newOptions);
+            }
+
+            simpla.storage.searches.push(this);
         }
         
         function init () {
@@ -1525,6 +1550,12 @@
             return this;
         };
 
+        Object.defineProperty(simpla.UI.Search.prototype, 'reinit', {
+            value: function (newOptions) {
+                reinit.call(this, newOptions);
+            },
+            enumerable: false
+        });
         Object.defineProperty(simpla.UI.Search.prototype, 'init', {
             value: function () {
                 init.call(this);

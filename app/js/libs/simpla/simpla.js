@@ -113,7 +113,7 @@
         return Object.create(null);
     };
 
-    simpla.helpers.addZero = function (n) {
+    simpla.helpers.addLeadingZero = function (n) {
         return (n < 10) ? '0' + n : n;
     };
 
@@ -242,7 +242,6 @@
 
     // Form
     simpla.form = {};
-    simpla.form.firstInvalidField = null;
 
     // Checks if the given pattern exists in the given string
     /*
@@ -272,8 +271,8 @@
         el.addClass('js-input--invalid').removeClass('js-input--valid');
         e.preventDefault();
 
-        if (options.scrollToInvalid && simpla.form.firstInvalidField) {
-            simpla.DOM.scrollBody(simpla.form.firstInvalidField, {}, options.scrollCorrection);
+        if (options.scrollToInvalid && firstInvalidField) {
+            simpla.DOM.scrollBody(firstInvalidField, options.scrollCorrection, {});
         }
         if (options.showNotice) {
             simpla.DOM.showNotice(noticeID, 'notice', el, el.data('notice'));
@@ -296,7 +295,9 @@
                 showNotice: true,
                 stopOnInvalid: true,
                 callback: $.noop
-            }, result;
+            }, countInvalid = 0, firstInvalidField;
+
+        form[0].firstInvalidField = null;
 
         if (simpla.helpers.getClass(options) === 'Object') {
             simpla.helpers.extend(options, defaults);
@@ -323,16 +324,17 @@
                             case 'string': {
                                 if (val.length) {
                                     simpla.form.setValid(self, defaults.showNotice, noticeID);
-                                    result = true;
-                                    simpla.form.firstInvalidField = null;
+                                    form[0].firstInvalidField = null;
                                     defaults.callback();
                                 } else {
-                                    if (!simpla.form.firstInvalidField) {
-                                        simpla.form.firstInvalidField = self;
+                                    if (!form[0].firstInvalidField) {
+                                        form[0].firstInvalidField = self;
                                     }
-                                    simpla.form.setInvalid(self, e, noticeID, defaults);
-                                    result = false;
+
+                                    simpla.form.setInvalid(self, e, noticeID, form[0].firstInvalidField, defaults);
+                                    countInvalid += 1;
                                     defaults.callback();
+
                                     if (defaults.stopOnInvalid) {
                                         return false;
                                     }
@@ -342,16 +344,17 @@
                             case 'email': {
                                 if (simpla.form.isEmail(val)) {
                                     simpla.form.setValid(self, defaults.showNotice, noticeID);
-                                    result = true;
-                                    simpla.form.firstInvalidField = null;
+                                    form[0].firstInvalidField = null;
                                     defaults.callback();
                                 } else {
-                                    if (!simpla.form.firstInvalidField) {
-                                        simpla.form.firstInvalidField = self;
+                                    if (!form[0].firstInvalidField) {
+                                        form[0].firstInvalidField = self;
                                     }
-                                    simpla.form.setInvalid(self, e, noticeID, defaults);
-                                    result = false;
+
+                                    simpla.form.setInvalid(self, e, noticeID, form[0].firstInvalidField, defaults);
+                                    countInvalid += 1;
                                     defaults.callback();
+
                                     if (defaults.stopOnInvalid) {
                                         return false;
                                     }
@@ -361,16 +364,17 @@
                             default: {
                                 if (simpla.form.isPattern(pattern, val)) {
                                     simpla.form.setValid(self, defaults.showNotice, noticeID);
-                                    result = true;
-                                    simpla.form.firstInvalidField = null;
+                                    form[0].firstInvalidField = null;
                                     defaults.callback();
                                 } else {
-                                    if (!simpla.form.firstInvalidField) {
-                                        simpla.form.firstInvalidField = self;
+                                    if (!form[0].firstInvalidField) {
+                                        form[0].firstInvalidField = self;
                                     }
-                                    simpla.form.setInvalid(self, e, noticeID, defaults);
-                                    result = false;
+
+                                    simpla.form.setInvalid(self, e, noticeID, form[0].firstInvalidField, defaults);
+                                    countInvalid += 1;
                                     defaults.callback();
+
                                     if (defaults.stopOnInvalid) {
                                         return false;
                                     }
@@ -387,16 +391,17 @@
                     if (typeof isChecked === 'boolean') {
                         if (self.prop('checked') === isChecked) {
                             simpla.form.setValid(self);
-                            result = true;
-                            simpla.form.firstInvalidField = null;
+                            form[0].firstInvalidField = null;
                             defaults.callback();
                         } else {
-                            if (!simpla.form.firstInvalidField) {
-                                simpla.form.firstInvalidField = self;
+                            if (!form[0].firstInvalidField) {
+                                form[0].firstInvalidField = self;
                             }
-                            simpla.form.setInvalid(self, e, noticeID, defaults);
-                            result = false;
+
+                            simpla.form.setInvalid(self, e, noticeID, form[0].firstInvalidField, defaults);
+                            countInvalid += 1;
                             defaults.callback();
+
                             if (defaults.stopOnInvalid) {
                                 return false;
                             }
@@ -420,7 +425,7 @@
         @param options {object} - options to be passed into animate function
         @param correction {number} - an offset correction
     */
-    simpla.DOM.scrollBody = function (target, options, correction) {
+    simpla.DOM.scrollBody = function (target, correction, options) {
         $('html, body').animate({
             scrollTop: target.offset().top - (correction || 0)
         }, options || {});
@@ -478,6 +483,33 @@
 
         return maxHeight;
     }
+
+    simpla.DOM.getScrollbarWidth = (function () {
+        var scrollbarWidth;
+
+        return function () {
+            var div;
+
+            if (scrollbarWidth) {
+                return scrollbarWidth;
+            }
+
+            div = document.createElement('div');
+
+            div.style.width = '100px';
+            div.style.height = '100px';
+            div.style.overflow = 'scroll';
+            div.style.visibility = 'hidden';
+
+            document.body.appendChild(div);
+
+            scrollWidth = div.offsetWidth - div.clientWidth;
+
+            document.body.removeChild(div);
+
+            return scrollWidth;
+        };
+    }());
     // DOM manipulation (END)
 
     // Modules

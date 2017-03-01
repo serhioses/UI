@@ -15,7 +15,7 @@
         &--outer {
             display: none;
         }
-        &.t-tab-nav-item--active, &.t-tab-nav-item--active_mobile {
+        &.t-tab-nav-item--active {
             border-bottom-color: #ff4081;
         }
         &--inner {
@@ -29,7 +29,7 @@
     &__item {
         display: none;
         font-size: 16px;
-        &.t-tab-item--active {
+        &.t-tab-item--active_mobile {
             display: block;
         }
     }
