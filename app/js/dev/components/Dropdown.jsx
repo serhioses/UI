@@ -282,11 +282,11 @@ export default class Dropdown extends UI {
                             <div className="settings">
                                 <h4 className="settings__title">Эффект</h4>
                                 <input id="effect-1" className="none" type="radio" name="effect" value="toggle" defaultChecked={true} data-ui="dropdown" data-property="effect" data-property-type="any" data-indexes="1,2" />
-                                <label className="checkbox" htmlFor="effect-1">Резко</label>
+                                <label className="radio" htmlFor="effect-1">Резко</label>
                                 <input id="effect-2" className="none" type="radio" name="effect" value="fade" data-ui="dropdown" data-property="effect" data-property-type="any" data-indexes="1,2" />
-                                <label className="checkbox" htmlFor="effect-2">Затухание</label>
+                                <label className="radio" htmlFor="effect-2">Затухание</label>
                                 <input id="effect-3" className="none" type="radio" name="effect" value="slide" data-ui="dropdown" data-property="effect" data-property-type="any" data-indexes="1,2" />
-                                <label className="checkbox" htmlFor="effect-3">Слайд</label>
+                                <label className="radio" htmlFor="effect-3">Слайд</label>
                                 <label className="settings__title settings__title--location_inside" htmlFor="animation-duration-2">Время анимации</label>
                                 <input id="animation-duration-2" className="form-field" type="number" min="0" placeholder="Enter miliseconds" data-ui="dropdown" data-property="animationDuration" data-property-type="any" data-indexes="1,2" />
                             </div>
