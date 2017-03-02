@@ -199,7 +199,6 @@
 
             if (circle) {
                 btn.removeChild(circle);
-                circle = null;
             }
 
             circle = document.createElement('div');
@@ -217,6 +216,7 @@
 
             timerID = setTimeout(function () {
                 btn.removeChild(circle);
+                // circle = null;
             }, 600);
         };
     }());

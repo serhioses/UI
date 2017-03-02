@@ -530,7 +530,7 @@
 
             target = $(e.target);
             control = target.closest('.sp-control');
-
+            
             if (!control.length) {
                 return;
             }
