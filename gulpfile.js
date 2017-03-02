@@ -2,8 +2,19 @@ const gulp = require('gulp'),
     webpack = require('webpack-stream'),
     autoprefixer = require('gulp-autoprefixer'),
     sass = require('gulp-ruby-sass'),
+    uglify = require('gulp-uglify'),
+    rename = require('gulp-rename'),
     watch = require('gulp-watch'),
     path = 'app';
+
+gulp.task('scripts', function () {
+    return gulp.src([path + '/js/libs/simpla/simpla.js', path + '/js/libs/simpla/simpla-ui.js'])
+    .pipe(uglify({
+        mangle: false
+    }))
+    .pipe(rename({suffix: '.min'}))
+    .pipe(gulp.dest(path + '/js/libs/simpla'));
+});
 
 gulp.task('webpack', function () {
     return gulp.src(path + '/js/dev/app.jsx')
@@ -23,7 +34,8 @@ gulp.task('styles', function () {
     .pipe(gulp.dest(path + '/css'));
 });
 
-gulp.task('watch', ['webpack', 'styles'], function () {
+gulp.task('watch', ['scripts', 'webpack', 'styles'], function () {
+    gulp.watch([path + '/js/libs/simpla/simpla.js', path + '/js/libs/simpla/simpla-ui.js'], ['scripts']);
     gulp.watch([path + '/js/dev/**/*.*'], ['webpack']);
     gulp.watch(path + '/sass/*.scss', ['styles']);
 });

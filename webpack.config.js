@@ -28,8 +28,8 @@ module.exports = {
         extensions: ['', '.js', '.jsx'],
         root: __dirname,
         alias: {
-            simplaUI: 'app/js/libs/simpla/simpla-ui.js',
-            simpla: 'app/js/libs/simpla/simpla.js',
+            simplaUI: 'app/js/libs/simpla/simpla-ui.min.js',
+            simpla: 'app/js/libs/simpla/simpla.min.js',
             Main: jsFolder + '/components/Main.jsx',
             Nav: jsFolder + '/components/Nav.jsx',
             Home: jsFolder + '/components/Home.jsx',
