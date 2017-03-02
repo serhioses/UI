@@ -21,6 +21,20 @@ export default class Bundle extends UI {
             bundle.init();
         });
     }
+    componentWillUnmount() {
+        var currentBundle = this.bundles[0],
+            pos, i;
+
+        if (!currentBundle) {
+            return;
+        }
+
+        pos = simpla.storage.bundles.indexOf(currentBundle);
+
+        if (pos !== -1) {
+            simpla.storage.bundles.splice(pos, 1);
+        }
+    }
     render() {
         return (
             <div className="content">
