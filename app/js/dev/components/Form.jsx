@@ -21,6 +21,14 @@ export default class Form extends React.Component {
         var form = document.getElementById('form');
 
         form.addEventListener('change', this.handleChange);
+
+        // this.setState({
+        //     update: {
+        //         dropdown: {},
+        //         spinner: {},
+        //         tabs: {}
+        //     }
+        // });
     }
     handleChange(e) {
         var target = $(e.target),
@@ -64,7 +72,9 @@ export default class Form extends React.Component {
             case 'dropdown': {
                 this.setState({
                     update: {
-                        dropdown: updates
+                        dropdown: updates,
+                        spinner: {},
+                        tabs: {}
                     }
                 });
                 break;
@@ -72,7 +82,9 @@ export default class Form extends React.Component {
             case 'spinner': {
                 this.setState({
                     update: {
-                        spinner: updates
+                        spinner: updates,
+                        dropdown: {},
+                        tabs: {}
                     }
                 });
                 break;
@@ -80,7 +92,9 @@ export default class Form extends React.Component {
             case 'tabs': {
                 this.setState({
                     update: {
-                        tabs: updates
+                        tabs: updates,
+                        dropdown: {},
+                        spinner: {}
                     }
                 });
                 break;
