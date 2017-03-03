@@ -1,14 +1,14 @@
 import React from 'react';
 import {Link, IndexLink} from 'react-router';
-import simpla from 'simpla';
-import 'simplaUI';
+import eclipse from 'eclipse';
+import 'eclipseUI';
 
 export default class Nav extends React.Component {
     constructor(props) {
         super(props);
     }
     componentDidMount() {
-        var nav = new simpla.UI.Bundle('nav-trigger', '');
+        var nav = new eclipse.UI.Bundle('nav-trigger', '');
         nav.init();
 
         $('body').on('click', '.nav__link:not(.nav__link--active)', function () {

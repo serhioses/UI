@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "jquery": "^3.1.0"
+  },
+  "description": "Fail is a JavaScript library for building user interfaces.",
+  "devDependencies": {},
+  "keywords": [
+    "fail"
+  ],
+  "main": "Fail.js",
+  "name": "failjs",
+  "repository": {},
+  "scripts": {},
+  "version": "1.0.0",
+  "author": "Serhiy Miroshnik"
+}

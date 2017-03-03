@@ -1,6 +1,6 @@
 import React from 'react';
-import simpla from 'simpla';
-import 'simplaUI';
+import eclipse from 'eclipse';
+import 'eclipseUI';
 import UI from 'UI';
 
 export default class Bundle extends UI {
@@ -13,7 +13,7 @@ export default class Bundle extends UI {
     componentDidMount() {
         var bundles = [];
 
-        bundles.push(new simpla.UI.Bundle('search-trigger', 'search__close'));
+        bundles.push(new eclipse.UI.Bundle('search-trigger', 'search__close'));
 
         this.bundles = bundles;
 
@@ -29,10 +29,10 @@ export default class Bundle extends UI {
             return;
         }
 
-        pos = simpla.storage.bundles.indexOf(currentBundle);
+        pos = eclipse.storage.bundles.indexOf(currentBundle);
 
         if (pos !== -1) {
-            simpla.storage.bundles.splice(pos, 1);
+            eclipse.storage.bundles.splice(pos, 1);
         }
     }
     render() {

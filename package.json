@@ -21,6 +21,7 @@
     "gulp-uglify": "^2.0.1",
     "gulp-watch": "^4.3.11",
     "jquery": "^3.1.1",
+    "jquery-ui": "^1.12.1",
     "script-loader": "^0.6.1",
     "webpack": "^1.14.0",
     "webpack-stream": "^3.2.0"

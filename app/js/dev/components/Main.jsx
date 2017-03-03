@@ -1,7 +1,7 @@
 import React from 'react';
 import Nav from 'Nav';
 import Footer from 'Footer';
-import simpla from 'simpla';
+import eclipse from 'eclipse';
 
 export default class Main extends React.Component {
     constructor(props) {
@@ -29,7 +29,7 @@ export default class Main extends React.Component {
         stickHeader();
         w.scroll(stickHeader);
 
-        $('body').on('mousedown', '.js-ripple-button', simpla.styles.rippleButton);
+        $('body').on('mousedown', '.js-ripple-button', eclipse.styles.rippleButton);
     }
     render() {
         return (

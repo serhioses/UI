@@ -1,6 +1,6 @@
 import React from 'react';
-import simpla from 'simpla';
-import 'simplaUI';
+import eclipse from 'eclipse';
+import 'eclipseUI';
 import UI from 'UI';
 
 export default class Dropdown extends UI {
@@ -12,18 +12,18 @@ export default class Dropdown extends UI {
     componentDidMount() {
         var dropdowns = [];
 
-        simpla.UI.Dropdown.hideOutside();
+        eclipse.UI.Dropdown.hideOutside();
 
-        dropdowns.push(new simpla.UI.Dropdown('dropdown', {
+        dropdowns.push(new eclipse.UI.Dropdown('dropdown', {
             trigger: 'dd-trigger',
             effect: 'slide',
             animationDuration: 300
         }));
 
-        dropdowns.push(new simpla.UI.Dropdown('dropdown-1', {
+        dropdowns.push(new eclipse.UI.Dropdown('dropdown-1', {
             trigger: 'dd-trigger'
         }));
-        dropdowns.push(new simpla.UI.Dropdown('dropdown-2', {
+        dropdowns.push(new eclipse.UI.Dropdown('dropdown-2', {
             trigger: 'dd-trigger'
         }));
 

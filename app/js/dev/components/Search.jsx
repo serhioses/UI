@@ -1,6 +1,6 @@
 import React from 'react';
-import simpla from 'simpla';
-import 'simplaUI';
+import eclipse from 'eclipse';
+import 'eclipseUI';
 import UI from 'UI';
 import regionsApi from 'regions';
 
@@ -19,8 +19,8 @@ export default class Search extends UI {
         var searches = [],
             dd;
 
-        simpla.UI.Dropdown.hideOutside();
-        dd = new simpla.UI.Dropdown('search-dropdown', {
+        eclipse.UI.Dropdown.hideOutside();
+        dd = new eclipse.UI.Dropdown('search-dropdown', {
             trigger: 'dd-trigger'
         });
         dd.init();
@@ -37,7 +37,7 @@ export default class Search extends UI {
             this.setState({
                 regions: list
             }, () => {
-                searches.push(new simpla.UI.Search('search-dropdown'));
+                searches.push(new eclipse.UI.Search('search-dropdown'));
 
                 this.searches = searches;
 

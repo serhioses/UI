@@ -1,5 +1,5 @@
 import React from 'react';
-import simpla from 'simpla';
+// import simpla from 'simpla';
 import {Link} from 'react-router';
 
 export default class Home extends React.Component {

@@ -1,6 +1,6 @@
 import React from 'react';
-import simpla from 'simpla';
-import 'simplaUI';
+import eclipse from 'eclipse';
+import 'eclipseUI';
 import UI from 'UI';
 
 export default class Spinner extends UI {
@@ -13,7 +13,7 @@ export default class Spinner extends UI {
     componentDidMount() {
         var spinners = [];
 
-        spinners.push(new simpla.UI.Spinner('spinner', {
+        spinners.push(new eclipse.UI.Spinner('spinner', {
             min: 1,
             max: 30,
             initial: 1

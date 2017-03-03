@@ -1,6 +1,6 @@
 import React from 'react';
-import simpla from 'simpla';
-import 'simplaUI';
+import eclipse from 'eclipse';
+import 'eclipseUI';
 import UI from 'UI';
 
 export default class Tabs extends UI {
@@ -13,7 +13,7 @@ export default class Tabs extends UI {
     componentDidMount() {
         var tabs = [];
 
-        tabs.push(new simpla.UI.AdaptiveTabs('tabs', {
+        tabs.push(new eclipse.UI.AdaptiveTabs('tabs', {
             hideAjacentTabsMobile: true,
             hideAjacentTabsDesktop: true,
             toggleTabsDesktop: false,
