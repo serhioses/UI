@@ -4,12 +4,6 @@ var jsFolder = 'app/js/dev';
 module.exports = {
     cache: true,
     debug: true,
-    // entry: [
-    //     // 'script!jquery/dist/jquery.min.js',
-    //     // 'script!./app/js/libs/simpla/simpla.js',
-    //     // 'script!./app/js/libs/simpla/simpla-ui.js',
-    //     jsFolder + '/app.jsx'
-    // ],
     entry: jsFolder + '/app.jsx',
     plugins: [
         new webpack.ProvidePlugin({
@@ -25,11 +19,6 @@ module.exports = {
         extensions: ['', '.js', '.jsx'],
         root: __dirname,
         alias: {
-            // Fail: 'app/js/libs/Fail/Fail.js',
-            // simplaUI: 'app/js/libs/simpla/simpla-ui.js',
-            // simpla: 'app/js/libs/simpla/simpla.js',
-            eclipse: 'app/js/libs/eclipse/eclipse.js',
-            eclipseUI: 'app/js/libs/eclipse-ui/eclipse-ui.js',
             Main: jsFolder + '/components/Main.jsx',
             Nav: jsFolder + '/components/Nav.jsx',
             Home: jsFolder + '/components/Home.jsx',

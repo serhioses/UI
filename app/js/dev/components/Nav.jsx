@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, IndexLink} from 'react-router';
 import eclipse from 'eclipse';
-import 'eclipseUI';
+import 'eclipse-ui';
 
 export default class Nav extends React.Component {
     constructor(props) {

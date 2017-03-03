@@ -1,6 +1,6 @@
 import React from 'react';
 import eclipse from 'eclipse';
-import 'eclipseUI';
+import 'eclipse-ui';
 import UI from 'UI';
 
 export default class Bundle extends UI {
