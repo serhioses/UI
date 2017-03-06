@@ -1,4 +1,14 @@
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory(require("jquery"));
+	else if(typeof define === 'function' && define.amd)
+		define(["jquery"], factory);
+	else if(typeof exports === 'object')
+		exports["eclipse"] = factory(require("jquery"));
+	else
+		root["eclipse"] = factory(root["jQuery"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_7__) {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 
@@ -103,7 +113,6 @@
 	eclipse.namespace = _namespace2.default.bind(eclipse);
 	eclipse.addMethod = _addMethod2.default.bind(eclipse);
 
-	// export default eclipse;
 	module.exports = eclipse;
 
 /***/ },
@@ -711,7 +720,7 @@
 /* 7 */
 /***/ function(module, exports) {
 
-	module.exports = jQuery;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
 
 /***/ },
 /* 8 */
@@ -772,4 +781,6 @@
 	};
 
 /***/ }
-/******/ ]);
+/******/ ])
+});
+;
